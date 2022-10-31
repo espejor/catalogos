@@ -15,7 +15,7 @@ android {
         targetSdk 32
         versionCode 1
         versionName "1.0"
-        buildConfigField "String", "googleKey", "\"GOOGLE_API_KEY\""
+        buildConfigField "String", "googleKey", "${project.GOOGLE_API_KEY}"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
