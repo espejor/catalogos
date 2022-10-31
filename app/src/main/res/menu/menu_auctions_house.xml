@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".auctions_house_package.auctions_house.AuctionsHouseActivity">
+    <item
+        android:id="@+id/manage_home"
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="@string/home"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+</menu>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="?listPreferredItemHeight"
+    android:orientation="vertical"
+    android:paddingBottom="8dp"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="8dp">
+
+    <ImageView
+        android:id="@+id/iv_avatar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:contentDescription="Image"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ic_account_circle" />
+
+    <RelativeLayout
+        android:id="@+id/lot_lyt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="6dp"
+        android:layout_toEndOf="@+id/iv_avatar">
+
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lot" />
+
+        <TextView
+            android:id="@+id/tv_lot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView9"
+            android:text="1234" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/divider4"
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/jewel_data_lyt"
+        android:layout_alignBottom="@id/jewel_data_lyt"
+        android:layout_marginStart="6dp"
+        android:layout_marginBottom="-10dp"
+        android:layout_toEndOf="@+id/lot_lyt"
+        android:background="?android:attr/listDivider" />
+
+    <RelativeLayout
+        android:id="@+id/jewel_data_lyt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="6dp"
+        android:layout_toEndOf="@id/divider4">
+
+        <TextView
+            android:id="@+id/tv_jewel_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Collar" />
+
+        <TextView
+            android:id="@+id/tv_designer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_jewel_type"
+            android:text="Cartier" />
+
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/divider3"
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/jewel_data_lyt"
+        android:layout_alignBottom="@id/jewel_data_lyt"
+        android:layout_marginStart="6dp"
+        android:layout_marginBottom="-10dp"
+        android:layout_toEndOf="@+id/jewel_data_lyt"
+        android:background="?android:attr/listDivider" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="0dp"
+        android:layout_toEndOf="@id/divider3">
+
+        <TextView
+            android:id="@+id/tv_auction_house"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sotheby's" />
+
+        <TextView
+            android:id="@+id/tv_auction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/tv_auction_house"
+            android:text="Joyas de ensueño" />
+
+        <TextView
+            android:id="@+id/tv_city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_auction"
+            android:text="París" />
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/tv_city"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/tv_city"
+            android:text="01-01-1990" />
+    </RelativeLayout>
+
+</RelativeLayout>

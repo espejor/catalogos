@@ -1,0 +1,41 @@
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".init_package.MainActivity">
+<!--    <item-->
+<!--        android:id="@+id/manage_home"-->
+<!--        android:icon="@drawable/ic_baseline_home_24"-->
+<!--        android:title="@string/home"-->
+<!--        android:visible="true"-->
+<!--        app:showAsAction="always" />-->
+<!--    <item-->
+<!--        android:id="@+id/action_settings"-->
+<!--        android:icon="@android:drawable/ic_menu_manage"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="@string/action_settings"-->
+<!--        app:showAsAction="ifRoom" >-->
+<!--        <menu>-->
+<!--            <item-->
+<!--                android:id="@+id/manage_auctions_house"-->
+<!--                android:icon="@drawable/ic_auction_svgrepo_com"-->
+<!--                android:title="@string/manage_auctions_house" />-->
+<!--            <item-->
+<!--                android:id="@+id/manage_cities"-->
+<!--                android:icon="@drawable/ic_baseline_location_city_24"-->
+<!--                android:title="@string/manage_cities" />-->
+<!--            <item-->
+<!--                android:id="@+id/manage_countries"-->
+<!--                android:icon="@drawable/ic_baseline_language_24"-->
+<!--                android:title="@string/manage_countries" />-->
+    <item
+        android:id="@+id/backup"
+        android:icon="@drawable/ic_baseline_backup_24"
+        android:title="@string/backup" />
+            <item
+                android:id="@+id/settings"
+                android:icon="@drawable/ic_baseline_settings_24"
+                android:title="@string/action_settings" />
+<!--        </menu>-->
+<!--    </item>-->
+</menu>

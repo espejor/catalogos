@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+
+    <application
+        android:requestLegacyExternalStorage="true"
+        android:name=".xyz.App"
+        android:allowBackup="true"
+        android:icon="@mipmap/joyas"
+        android:label="@string/app_name"
+        android:logo="@drawable/ic_baseline_menu_book_48_green"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoActionBar">
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".google_search.ItemListActivity"
+            android:label="@string/title_item_list"/>
+        <activity
+            android:name=".google_search.ItemDetailActivity"
+            android:label="@string/title_item_detail"
+            android:parentActivityName=".google_search.ItemListActivity"
+            android:theme="@style/AppTheme.NoActionBar.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.catalogos.google_search.ItemListActivity" />
+        </activity> <!-- android:theme="@style/AppTheme"> -->
+        <activity
+            android:name=".init_package.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".services.DataConvert"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name=".auctions_package.auctions.AuctionsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".auctions_package.auctiondetail.AuctionDetailActivity"
+            android:label="@string/title_activity_auction_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".auctions_package.addeditauction.AddEditAuctionActivity"
+            android:label="@string/title_activity_add_edit"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".jewels_package.jewels.JewelsByAuctionActivity"
+            android:label="@string/jewels"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".jewels_package.jewel_detail.JewelDetailActivity"
+            android:label="@string/title_activity_jewel_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".jewels_package.add_edit_jewel.AddEditJewelActivity"
+            android:label="@string/title_activity_add_edit"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".lots_package.lots.JewelsByLotDetailActivity"
+            android:label="@string/lots"
+            android:theme="@style/AppTheme.NoActionBar" /> <!-- <activity -->
+        <!-- android:name=".lots_package.lot_detail.JewelsByLotDetailActivity" -->
+        <!-- android:label="@string/title_activity_lot_detail" -->
+        <!-- android:theme="@style/AppTheme.NoActionBar" /> -->
+        <!-- <activity -->
+        <!-- android:name=".lots_package.add_edit_lot.AddEditLotActivity" -->
+        <!-- android:label="@string/title_activity_add_edit" -->
+        <!-- android:theme="@style/AppTheme.NoActionBar" /> -->
+        <activity
+            android:name=".auctions_house_package.auctions_house.AuctionsHouseActivity"
+            android:label="@string/auctions_house"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".auctions_house_package.auction_house_detail.AuctionHouseDetailActivity"
+            android:label="@string/title_activity_auction_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".auctions_house_package.add_edit_auction_house.AddEditAuctionHouseActivity"
+            android:label="@string/title_activity_add_edit"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".cities_package.cities.CitiesActivity"
+            android:label="@string/cities"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".cities_package.add_edit_city.AddEditCityActivity"
+            android:label="@string/add_edit_city"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".cities_package.city_detail.CityDetailActivity"
+            android:label="@string/detail_city"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".countries_package.countries.CountriesActivity"
+            android:label="@string/countries"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".countries_package.add_edit_country.AddEditCountryActivity"
+            android:label="@string/add_edit_country"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".countries_package.country_detail.CountryDetailActivity"
+            android:label="@string/detail_country"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".jeweltypes_package.jeweltypes.JewelTypesActivity"
+            android:label="@string/jeweltypes"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".jeweltypes_package.add_edit_jeweltype.AddEditJewelTypeActivity"
+            android:label="@string/add_edit_jeweltype"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".jeweltypes_package.jeweltype_detail.JewelTypeDetailActivity"
+            android:label="@string/detail_jeweltype"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".designers_package.designers.DesignersActivity"
+            android:label="@string/periods"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".designers_package.add_edit_designer.AddEditDesignerActivity"
+            android:label="@string/add_edit_designer"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".designers_package.designer_detail.DesignerDetailActivity"
+            android:label="@string/detail_designer"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".cuts_package.cuts.CutsActivity"
+            android:label="@string/cuts"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".cuts_package.add_edit_cut.AddEditCutActivity"
+            android:label="@string/add_edit_cut"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".cuts_package.cut_detail.CutDetailActivity"
+            android:label="@string/detail_cut"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".owners_package.owners.OwnersActivity"
+            android:label="@string/owners"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".owners_package.add_edit_owner.AddEditOwnerActivity"
+            android:label="@string/add_edit_owner"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".owners_package.owner_detail.OwnerDetailActivity"
+            android:label="@string/detail_owner"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".gemstones_package.gemstones.GemstonesActivity"
+            android:label="@string/gemstones"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".gemstones_package.add_edit_gemstone.AddEditGemstoneActivity"
+            android:label="@string/add_edit_gemstone"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".gemstones_package.gemstone_detail.GemstoneDetailActivity"
+            android:label="@string/detail_gemstone"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".periods_package.periods.PeriodsActivity"
+            android:label="@string/periods"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".periods_package.add_edit_period.AddEditPeriodActivity"
+            android:label="@string/add_edit_period"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".periods_package.period_detail.PeriodDetailActivity"
+            android:label="@string/detail_period"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".google_drive_access.ui.GoogleLoginActivity" />
+        <activity android:name="com.example.catalogos.services.pdfviewer.PDFViewActivity" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+    </application>
+
+</manifest>

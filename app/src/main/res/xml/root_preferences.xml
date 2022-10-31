@@ -1,0 +1,27 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/backup">
+
+<!--        <EditTextPreference-->
+<!--            android:visibility="invisible"-->
+
+<!--            app:key="backupFileId"-->
+<!--            -->
+<!--            app:title="@string/nullString"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="updateDB"
+            app:summary="¿Actualizar (sí) o Crear (no) una nueva copia de los datos en cada copia de seguridad"
+            app:summaryOff="Crear"
+            app:summaryOn="Actualizar"
+            app:switchTextOff="Crear"
+            app:switchTextOn="Actualizar"
+            app:title="@string/update_db" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

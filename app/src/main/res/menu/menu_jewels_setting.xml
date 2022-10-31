@@ -1,0 +1,51 @@
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".auctions_package.auctions.AuctionsActivity">
+    <item
+        android:id="@+id/manage_home"
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="@string/home"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/create_pdf"
+        android:icon="@drawable/ic_baseline_picture_as_pdf_24_white"
+        android:title="@string/create_pdf"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="ifRoom" >
+        <menu>
+            <item
+                android:id="@+id/manage_jeweltypes"
+                android:icon="@drawable/ic_necklace_svgrepo_com"
+                android:title="@string/manage_jeweltypes" />
+            <item
+                android:id="@+id/manage_designers"
+                android:icon="@drawable/ic_jewelry_department_gem_jewelry_svgrepo_com"
+                android:title="@string/manage_designers" />
+            <item
+                android:id="@+id/manage_cuts"
+                android:icon="@drawable/ic_jewelry_gemstone_heart_love_valentine_svgrepo_com"
+                android:title="@string/manage_cuts" />
+            <item
+                android:id="@+id/manage_owners"
+                android:icon="@drawable/ic_jeweler_jewelry_repair_svgrepo_com"
+                android:title="@string/manage_owners" />
+            <item
+                android:id="@+id/manage_gemstones"
+                android:icon="@drawable/ic_jewel_svgrepo_com"
+                android:title="@string/manage_gemstones" />
+            <item
+                android:id="@+id/manage_periods"
+                android:icon="@drawable/ic_navigation_history_interface_symbol_of_a_clock_with_an_arrow_svgrepo_com"
+                android:title="@string/manage_periods" />
+        </menu>
+    </item>
+</menu>

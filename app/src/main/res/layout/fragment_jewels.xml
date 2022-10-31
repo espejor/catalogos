@@ -1,0 +1,41 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_jewels"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:tag="fragment_jewels"
+    tools:context=".jewels_package.jewels.JewelsByAuctionFragment">
+
+    <ListView
+        android:id="@+id/jewels_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@null"
+        tools:listitem="@layout/list_item_jewel" />
+    <TextView
+        android:id="@+id/text_empty_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:text="@string/empty_list"
+        android:gravity="center"/>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="25dp"
+        android:baselineAlignBottom="true"
+        android:contentDescription="@string/todo"
+        android:tint="@android:color/white"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_pearl_necklace_svgrepo_com_plus" />
+
+</FrameLayout>

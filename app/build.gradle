@@ -1,0 +1,81 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.example.catalogos'
+    compileSdk 32
+
+    packagingOptions {
+        resources.excludes.add ('META-INF/DEPENDENCIES')
+    }
+    defaultConfig {
+        applicationId "com.example.catalogos"
+        minSdk 21
+        targetSdk 32
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation 'androidx.preference:preference:1.1.+'
+
+
+//    implementation 'androidx.appcompat:appcompat:1.5.1'
+//    implementation 'com.google.android.material:material:1.6.1'
+//    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+
+
+    // Dependencies for API access
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'commons-io:commons-io:2.6'
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.annotation:annotation:1.5.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    // Glide v4 uses this new annotation processor -- see https://bumptech.github.io/glide/doc/generatedapi.html
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.8.0-alpha01'
+    // https://mvnrepository.com/artifact/com.google.android.gms/play-services-auth
+    implementation 'com.google.android.gms:play-services-auth:20.3.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.0'
+    implementation ('com.google.apis:google-api-services-drive:v3-rev197-1.25.0')
+    implementation 'com.google.apis:google-api-services-oauth2:v2-rev157-1.25.0'
+    // https://mvnrepository.com/artifact/com.google.api.client/google-api-client-googleapis-auth
+//    implementation 'com.google.api-client:google-api-client:1.32.1'
+    implementation 'org.zeroturnaround:zt-zip:1.15'
+    implementation 'com.itextpdf:itext7-core:7.1.7'
+    implementation 'com.google.android.gms:play-services-auth:20.3.0'
+//    implementation 'com.github.tejpratap46:PDFCreatorAndroid:3.0.2'
+    implementation 'com.github.mhiew:android-pdf-viewer:3.2.0-beta.1'
+
+    implementation ('com.google.api-client:google-api-client-android:1.26.0')
+    { exclude group: 'org.apache.httpcomponents' }
+    implementation 'com.google.http-client:google-http-client-gson:1.42.2'
+}

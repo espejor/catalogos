@@ -1,0 +1,24 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_cities"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:tag="fragment_cities"
+    tools:context=".cities_package.cities.CitiesFragment">
+
+    <ListView
+        android:id="@+id/cities_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@null"
+        tools:listitem="@layout/list_item_auction_house" />
+    <TextView
+        android:id="@+id/text_empty_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:text="@string/empty_list"
+        android:gravity="center"/>
+
+</FrameLayout>
