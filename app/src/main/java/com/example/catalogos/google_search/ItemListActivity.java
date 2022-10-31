@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.catalogos.BuildConfig;
 import com.example.catalogos.R;
 import com.example.catalogos.api_pictures.PictureGoogle;
 import com.example.catalogos.services.GoogleAPIService;
@@ -89,7 +90,7 @@ public class ItemListActivity extends AppCompatActivity {
         setupRecyclerView ((RecyclerView) recyclerView,new ArrayList<PictureGoogle> ());
 
         String uri = "https://customsearch.googleapis.com/customsearch/v1/";
-        String googleKey = "AIzaSyBCziGkwNnxLNvlYI8PECmou9CVH8rkeR4";
+        String googleKey = BuildConfig.googleKey;
         String cx = "5e6330eb047b792d2";
         String imgType = "photo";
         String searchType = "image";
