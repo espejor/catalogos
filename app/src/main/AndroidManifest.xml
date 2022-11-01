@@ -205,6 +205,9 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".google_drive_access.ui.GoogleLoginActivity" />
         <activity android:name="com.example.catalogos.services.pdfviewer.PDFViewActivity" />
+        <activity android:name="com.example.catalogos.hallmarks_package.add_edit_hallmark.AddEditHallmarkActivity" />
+        <activity android:name="com.example.catalogos.hallmarks_package.hallmarks.HallmarksActivity" />
+        <activity android:name="com.example.catalogos.hallmarks_package.hallmark_detail.HallmarkDetailActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

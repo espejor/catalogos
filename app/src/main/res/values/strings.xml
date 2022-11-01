@@ -225,5 +225,6 @@
     <string name="local">Local</string>
     <string name="external">Externo</string>
     <string name="cancel">Cancelar</string>
+    <string name="hallmarks">Contrastes</string>
 
 </resources>

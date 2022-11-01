@@ -1,5 +1,7 @@
-package com.example.catalogos.owners_package.owners;
+package com.example.catalogos.hallmarks_package.hallmarks;
 
+
+import static com.example.catalogos.hallmarks_package.hallmarks_data.HallmarksContract.HallmarkEntry;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,56 +20,54 @@ import androidx.fragment.app.Fragment;
 
 import com.example.catalogos.R;
 import com.example.catalogos.database.DbHelper;
-import com.example.catalogos.owners_package.add_edit_owner.AddEditOwnerActivity;
-import com.example.catalogos.owners_package.owner_detail.OwnerDetailActivity;
+import com.example.catalogos.hallmarks_package.add_edit_hallmark.AddEditHallmarkActivity;
+import com.example.catalogos.hallmarks_package.hallmark_detail.HallmarkDetailActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import static com.example.catalogos.owners_package.owners_data.OwnersContract.OwnerEntry;
 
 
 /**
  * Vista para la lista de subastas del gabinete
  */
-public class OwnersFragment extends Fragment {
-    public static final int REQUEST_UPDATE_DELETE_OWNER = 2;
+public class HallmarksFragment extends Fragment {
+    public static final int REQUEST_UPDATE_DELETE_HALLMARK = 2;
 
     private DbHelper dbHelper;
 
-    private ListView mOwnersList;
-    private OwnersCursorAdapter mOwnersAdapter;
+    private ListView mHallmarksList;
+    private HallmarksCursorAdapter mHallmarksAdapter;
     private FloatingActionButton mAddButton;
     private TextView mTextEmptyList;
 
 
-    public OwnersFragment() {
+    public HallmarksFragment() {
         // Required empty public constructor
     }
 
-    public static OwnersFragment newInstance() {
-        return new OwnersFragment ();
+    public static HallmarksFragment newInstance() {
+        return new HallmarksFragment ();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_owners, container, false);
+        View root = inflater.inflate(R.layout.fragment_hallmarks, container, false);
 
         // Referencias UI
-        mOwnersList = root.findViewById(R.id.owners_list);
-        mOwnersAdapter = new OwnersCursorAdapter (getActivity(), null);
+        mHallmarksList = root.findViewById(R.id.hallmarks_list);
+        mHallmarksAdapter = new HallmarksCursorAdapter (getActivity(), null);
         mAddButton =  getActivity().findViewById(R.id.fab);
         mTextEmptyList = root.findViewById (R.id.text_empty_list);
 
         // Setup
-        mOwnersList.setAdapter(mOwnersAdapter);
+        mHallmarksList.setAdapter(mHallmarksAdapter);
 
         // Eventos
-        mOwnersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mHallmarksList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Cursor currentItem = (Cursor) mOwnersAdapter.getItem(i);
+                Cursor currentItem = (Cursor) mHallmarksAdapter.getItem(i);
                 String currentAuctionId = currentItem.getString(
-                        currentItem.getColumnIndex(OwnerEntry.ID));
+                        currentItem.getColumnIndex(HallmarkEntry.ID));
 
                 showDetailScreen(currentAuctionId);
             }
@@ -86,7 +86,7 @@ public class OwnersFragment extends Fragment {
         dbHelper = new DbHelper(getActivity());
 
         // Carga de datos
-        loadOwners();
+        loadHallmarks();
 
         return root;
     }
@@ -95,21 +95,21 @@ public class OwnersFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (Activity.RESULT_OK == resultCode) {
             switch (requestCode) {
-                case AddEditOwnerActivity.REQUEST_ADD_OWNER:
+                case AddEditHallmarkActivity.REQUEST_ADD_HALLMARK:
                     showSuccessfullSavedMessage();
-                    loadOwners();
+                    loadHallmarks();
                     break;
-                case REQUEST_UPDATE_DELETE_OWNER:
-                    loadOwners();
+                case REQUEST_UPDATE_DELETE_HALLMARK:
+                    loadHallmarks();
                     break;
             }
         }else{
-            loadOwners();
+            loadHallmarks();
         }
     }
 
-    private void loadOwners() {
-        new OwnersLoadTask().execute();
+    private void loadHallmarks() {
+        new HallmarksLoadTask().execute();
     }
 
     private void showSuccessfullSavedMessage() {
@@ -118,21 +118,21 @@ public class OwnersFragment extends Fragment {
     }
 
     private void showAddScreen() {
-        Intent intent = new Intent(getActivity(), AddEditOwnerActivity.class);
-        startActivityForResult(intent, AddEditOwnerActivity.REQUEST_ADD_OWNER);
+        Intent intent = new Intent(getActivity(), AddEditHallmarkActivity.class);
+        startActivityForResult(intent, AddEditHallmarkActivity.REQUEST_ADD_HALLMARK);
     }
 
     private void showDetailScreen(String auctionId) {
-        Intent intent = new Intent(getActivity(), OwnerDetailActivity.class);
-        intent.putExtra(OwnersActivity.EXTRA_OWNER_ID, auctionId);
-        startActivityForResult(intent, REQUEST_UPDATE_DELETE_OWNER);
+        Intent intent = new Intent(getActivity(), HallmarkDetailActivity.class);
+        intent.putExtra(HallmarksActivity.EXTRA_HALLMARK_ID, auctionId);
+        startActivityForResult(intent, REQUEST_UPDATE_DELETE_HALLMARK);
     }
 
-    private class OwnersLoadTask extends AsyncTask<Void, Void, Cursor> {
+    private class HallmarksLoadTask extends AsyncTask<Void, Void, Cursor> {
 
         @Override
         protected Cursor doInBackground(Void... voids) {
-            return dbHelper.getAllOwners ();
+            return dbHelper.getAllHallmarks ();
         }
 
         @Override
@@ -141,12 +141,12 @@ public class OwnersFragment extends Fragment {
                 cursor.moveToFirst ();
                 if (cursor.getCount () > 0) {
                     mTextEmptyList.setVisibility (View.INVISIBLE);
-                    mOwnersList.setVisibility (View.VISIBLE);
-                    mOwnersAdapter.swapCursor (cursor);
+                    mHallmarksList.setVisibility (View.VISIBLE);
+                    mHallmarksAdapter.swapCursor (cursor);
                 } else {
                     // Mostrar empty state
                     mTextEmptyList.setVisibility (View.VISIBLE);
-                    mOwnersList.setVisibility (View.INVISIBLE);
+                    mHallmarksList.setVisibility (View.INVISIBLE);
                 }
             }
         }

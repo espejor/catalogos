@@ -1,5 +1,6 @@
 package com.example.catalogos.lots_package.lots;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.catalogos.R;
 import com.example.catalogos.cuts_package.cuts_data.CutsContract.CutEntry;
 import com.example.catalogos.database.DbHelper;
+import com.example.catalogos.hallmarks_package.hallmarks_data.HallmarksContract;
 import com.example.catalogos.jewels_package.jewels_data.JewelsContract.JewelEntry;
 import com.example.catalogos.jeweltypes_package.jeweltypes_data.JewelTypesContract.JewelTypeEntry;
 import com.example.catalogos.recycler_package.CursorRecyclerViewAdapter;
@@ -30,13 +32,16 @@ import static com.example.catalogos.periods_package.periods_data.PeriodsContract
 
 class RecyclerLotsCursorAdapter extends CursorRecyclerViewAdapter<RecyclerLotsCursorAdapter.ViewHolder> {
 
+    private static final int OWNERS = 0;
+    private static final int GEMSTONE_AND_CUT = 1;
+    private static final int HALLMARKS = 2;
     private Context context;
     int auctionId;
 
     private Cursor currentCursor = null;
     private String currentLot;
     private String owners;
-    private String owner;
+    private String hallmarks;
     private boolean GEMSTONES_FETCHED;
     private String gemstoneAndCut;
 
@@ -53,28 +58,26 @@ class RecyclerLotsCursorAdapter extends CursorRecyclerViewAdapter<RecyclerLotsCu
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView avatarImage             ;
-        public TextView countryAssayMarkText     ;
-        public TextView workshopAssayMarkText    ;
         public TextView lotText                  ;
         public TextView serialText               ;
         public TextView jewelTypeText            ;
         public TextView gemstonesCutText         ;
         public TextView designerText             ;
         public TextView periodText               ;
+        public TextView hallmarksText;
         public TextView ownersText               ;
         public TextView obsText                  ;
 
         public ViewHolder(View view) {
             super(view);
             avatarImage             = view.findViewById(R.id.iv_avatar);
-            countryAssayMarkText    = view.findViewById(R.id.tv_country_assay_mark);
-            workshopAssayMarkText   = view.findViewById(R.id.tv_workshop_assay_mark);
             lotText                 = view.findViewById(R.id.tv_lot);
             serialText              = view.findViewById(R.id.tv_serial);
             jewelTypeText           = view.findViewById(R.id.tv_jewel_type);
             gemstonesCutText        = view.findViewById(R.id.tv_gemstones_cut);
             designerText            = view.findViewById(R.id.tv_designer);
             periodText              = view.findViewById(R.id.tv_period);
+            hallmarksText           = view.findViewById(R.id.tv_hallmarks);
             ownersText              = view.findViewById(R.id.tv_owners);
             obsText                 = view.findViewById(R.id.tv_obs);
         }
@@ -98,13 +101,7 @@ class RecyclerLotsCursorAdapter extends CursorRecyclerViewAdapter<RecyclerLotsCu
         String entryJewelId = JewelEntry.ID;
         String entryAuctionId = JewelEntry.FK_AUCTION_ID;
 
-        String entryGemstone = GemstoneEntry.NAME;
-        String entryCut = CutEntry.NAME;
-        String entryOwner = OwnerEntry.NAME;
-
         String entryLotNumber = JewelEntry.LOT;
-        String entryCountryAssayMark = JewelEntry.COUNTRY_MARK;
-        String entryWorkshopAssayMark = JewelEntry.WORKSHOP_MARK;
         String entrySerial = JewelEntry.SERIAL;
         String entryJewelType = JewelTypeEntry.NAME;
         String entryDesigner = DesignerEntry.NAME;
@@ -116,8 +113,6 @@ class RecyclerLotsCursorAdapter extends CursorRecyclerViewAdapter<RecyclerLotsCu
         auctionId = cursor.getInt (cursor.getColumnIndex (entryAuctionId));
 
         String lot = cursor.getString (cursor.getColumnIndex (entryLotNumber));
-//        String countryAssayMark = cursor.getString(cursor.getColumnIndex(entryCountryAssayMark));
-//        String workshopAssayMark = cursor.getString(cursor.getColumnIndex(entryWorkshopAssayMark));
         String serial = cursor.getString (cursor.getColumnIndex (entrySerial));
         String jewelType = cursor.getString (cursor.getColumnIndex (entryJewelType));
         String designer = cursor.getString (cursor.getColumnIndex (entryDesigner));
@@ -128,8 +123,6 @@ class RecyclerLotsCursorAdapter extends CursorRecyclerViewAdapter<RecyclerLotsCu
 
         // Setup.
         viewHolder.lotText.setText (lot);
-//        viewHolder.countryAssayMarkText.setText(countryAssayMark);
-//        viewHolder.workshopAssayMarkText.setText(workshopAssayMark);
         viewHolder.serialText.setText (serial);
         viewHolder.jewelTypeText.setText (jewelType);
         viewHolder.designerText.setText (designer);
@@ -153,39 +146,31 @@ class RecyclerLotsCursorAdapter extends CursorRecyclerViewAdapter<RecyclerLotsCu
         }
 
         // -------- Rellenamos los campos múltiples
-        owners = getMultipleDataFromLot (id)[0];
-        gemstoneAndCut = getMultipleDataFromLot (id)[1];
-
-//        String currentOwner = cursor.getString(cursor.getColumnIndex(entryOwner));
-////        while (cursor == currentCursor && cursor.getPosition () < cursor.getCount ()) {   // reiteramos sobre la misma joya
-////            owner = cursor.getString(cursor.getColumnIndex(entryOwner));
-////            owners += owner;
-//            if(currentOwner.equals (owner) && !GEMSTONES_FETCHED){
-//                gemstoneAndCut += cursor.getString(cursor.getColumnIndex(entryGemstone)) + " talla " +
-//                    cursor.getString(cursor.getColumnIndex(entryCut));
-////                owner = cursor.getString(cursor.getColumnIndex(entryOwner));
-//            }
-//            GEMSTONES_FETCHED = true;
-////            owners += owner;
-////        }
+        owners = getMultipleDataFromLot (id)[OWNERS];
+        gemstoneAndCut = getMultipleDataFromLot (id)[GEMSTONE_AND_CUT];
+        hallmarks = getMultipleDataFromLot (id)[HALLMARKS];
         viewHolder.gemstonesCutText.setText(gemstoneAndCut);
         viewHolder.ownersText.setText(owners);
+        viewHolder.hallmarksText.setText(hallmarks);
     }
 
     private String[] getMultipleDataFromLot(String id){
         Cursor cursor = dbHelper.getJewelByLot (auctionId, currentLot, false);
 
         ArrayList<String> listOfOwners = new ArrayList<> ();
+        ArrayList<String> listOfHallmarks = new ArrayList<> ();
         ArrayList<String[]> listOfGemstonesAndCuts = new ArrayList<> ();
         StringBuilder owners = new StringBuilder ();
+        StringBuilder hallmarks = new StringBuilder ();
         StringBuilder gemstonesAndCuts = new StringBuilder ();
 
         try {
             cursor.moveToPosition (-1);
             while (cursor.moveToNext()){
-                String jewelId = cursor.getString (cursor.getColumnIndex(JewelEntry.ID));
+                @SuppressLint("Range") String jewelId = cursor.getString (cursor.getColumnIndex(JewelEntry.ID));
                 if (jewelId.equals (id)) {
                     String owner = cursor.getString (cursor.getColumnIndex (OwnerEntry.NAME));
+                    String hallmark = cursor.getString (cursor.getColumnIndex (HallmarksContract.HallmarkEntry.NAME));
                     String gemstone = cursor.getString (cursor.getColumnIndex (GemstoneEntry.NAME));
                     String cut = cursor.getString (cursor.getColumnIndex (CutEntry.NAME));
                     if (owner != null && ! listOfOwners.contains (owner)) {
@@ -193,6 +178,12 @@ class RecyclerLotsCursorAdapter extends CursorRecyclerViewAdapter<RecyclerLotsCu
                         if (cursor.getPosition () > 0)
                             owners.append ("\n");
                         owners.append (owner);
+                    }
+                    if (hallmark != null && ! listOfOwners.contains (hallmark)) {
+                        listOfHallmarks.add (hallmark);
+                        if (cursor.getPosition () > 0)
+                            hallmarks.append ("\n");
+                        hallmarks.append (hallmark);
                     }
                     String[] element = new String[]{gemstone, cut};
                     if (gemstone != null && ! ListFeatures.listContains (listOfGemstonesAndCuts, element)) {
@@ -211,7 +202,11 @@ class RecyclerLotsCursorAdapter extends CursorRecyclerViewAdapter<RecyclerLotsCu
             }
         }
 
-        return new String[]{String.valueOf (owners), String.valueOf (gemstonesAndCuts)};
+        return new String[]{
+                String.valueOf (owners),
+                String.valueOf (gemstonesAndCuts),
+                String.valueOf (hallmarks)
+        };
     }
 
 }

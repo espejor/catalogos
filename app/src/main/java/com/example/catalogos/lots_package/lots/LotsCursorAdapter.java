@@ -42,26 +42,18 @@ public class LotsCursorAdapter extends CursorAdapter {
 
         // Referencias UI.
         ImageView avatarImage           = view.findViewById(R.id.iv_avatar);
-        TextView countryAssayMarkText   = view.findViewById(R.id.tv_country_assay_mark);
-        TextView workshopAssayMarkText  = view.findViewById(R.id.tv_workshop_assay_mark);
         TextView lotText                = view.findViewById(R.id.tv_lot);
         TextView serialText             = view.findViewById(R.id.tv_serial);
         TextView jewelTypeText          = view.findViewById(R.id.tv_jewel_type);
-        TextView gemstonesCutText       = view.findViewById(R.id.tv_gemstones_cut);
         TextView designerText           = view.findViewById(R.id.tv_designer);
         TextView periodText             = view.findViewById(R.id.tv_period);
-        TextView ownersText             = view.findViewById(R.id.tv_owners);
         TextView obsText                = view.findViewById(R.id.tv_obs);
 
 
         // Get valores.
         String entryLot = JewelEntry.LOT;
-        String entryCountryAssayMark =  JewelEntry.COUNTRY_MARK;
-        String entryWorkshopAssayMark =  JewelEntry.WORKSHOP_MARK;
         String entrySerial =  JewelEntry.SERIAL;
         String entryJewelType = JewelTypeEntry.NAME;
-//        String entryGemstonesCut = decodeGemstonesCuts(GemstoneEntry.NAME, CutEntry.NAME);
-//        String entryOwners = decodeOwners(OwnerEntry.NAME);
         String entryDesigner =  DesignerEntry.NAME;
         String entryPeriod = PeriodEntry.NAME;
         String entryObs =  JewelEntry.OBS;
@@ -69,12 +61,8 @@ public class LotsCursorAdapter extends CursorAdapter {
 
 
         String lot = cursor.getString(cursor.getColumnIndex(entryLot));
-//        String countryAssayMark = cursor.getString(cursor.getColumnIndex(entryCountryAssayMark));
-//        String workshopAssayMark = cursor.getString(cursor.getColumnIndex(entryWorkshopAssayMark));
         String serial           = cursor.getString(cursor.getColumnIndex(entrySerial));
         String jewelType        = cursor.getString(cursor.getColumnIndex(entryJewelType));
-//        String gemstonesCut     = cursor.getString(cursor.getColumnIndex(entryGemstonesCut));
-//        String owners           = cursor.getString(cursor.getColumnIndex(entryOwners));
         String designer         = cursor.getString(cursor.getColumnIndex(entryDesigner));
         String period           = cursor.getString(cursor.getColumnIndex(entryPeriod));
         String obs              = cursor.getString(cursor.getColumnIndex(entryObs));
@@ -84,12 +72,8 @@ public class LotsCursorAdapter extends CursorAdapter {
 
         // Setup.
         lotText.setText(lot);
-//        countryAssayMarkText.setText(countryAssayMark);
-//        workshopAssayMarkText.setText(workshopAssayMark);
         serialText      .setText(serial      );
         jewelTypeText   .setText(jewelType   );
-//        gemstonesCutText.setText(gemstonesCut);
-//        ownersText      .setText(owners     );
         designerText    .setText(designer      );
         periodText      .setText(period    );
         obsText         .setText(obs         );

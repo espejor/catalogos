@@ -1,0 +1,23 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_hallmarks"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:tag="fragment_hallmarks"
+    tools:context=".hallmarks_package.hallmarks.HallmarksFragment">
+
+    <ListView
+        android:id="@+id/hallmarks_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@null"/>
+    <TextView
+        android:id="@+id/text_empty_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:text="@string/empty_list"
+        android:gravity="center"/>
+
+</FrameLayout>

@@ -43,6 +43,9 @@ import com.example.catalogos.database.mix_tables.JewelsOwnersContract.JewelsOwne
 import com.example.catalogos.designers_package.designers_data.Designer;
 import com.example.catalogos.gemstones_cuts_package.gemstones_cuts_data.JewelsGemstonesCuts;
 import com.example.catalogos.gemstones_package.gemstones_data.Gemstone;
+import com.example.catalogos.hallmarks_package.hallmarks_data.Hallmark;
+import com.example.catalogos.hallmarks_package.hallmarks_data.HallmarksContract;
+import com.example.catalogos.hallmarks_package.hallmarks_data.HallmarksContract.HallmarkEntry;
 import com.example.catalogos.jewels_owners_package.jewels_data.JewelsOwners;
 import com.example.catalogos.jewels_package.jewels_data.Jewel;
 import com.example.catalogos.jeweltypes_package.jeweltypes_data.JewelType;
@@ -171,6 +174,14 @@ public class DbHelper extends SQLiteOpenHelper {
                 + OwnerEntry.NAME + " TEXT NOT NULL,"
                 + OwnerEntry.AVATAR_URI + " TEXT,"
                 + "UNIQUE (" + OwnerEntry.ID + "))");
+
+        // Creación de la tabla de CONTRASTES
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + HallmarkEntry.TABLE_NAME + " ("
+                + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + HallmarkEntry.ID + " TEXT NOT NULL,"
+                + HallmarkEntry.NAME + " TEXT NOT NULL,"
+                + HallmarkEntry.AVATAR_URI + " TEXT,"
+                + "UNIQUE (" + HallmarkEntry.ID + "))");
 
 
         // Creación de la tabla de TIPO DE PIEDRA PRECIOSA
@@ -1194,6 +1205,57 @@ public class DbHelper extends SQLiteOpenHelper {
                 designer.toContentValues(),
                 OwnerEntry.ID + " LIKE ?",
                 new String[]{OwnerId}
+        );
+    }
+
+    //---------------- Hallmark
+
+    public long saveHallmark(Hallmark designer) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+
+        return sqLiteDatabase.insert(
+                HallmarkEntry.TABLE_NAME,
+                null,
+                designer.toContentValues());
+
+    }
+
+    public Cursor getAllHallmarks() {
+        return getReadableDatabase()
+                .query(
+                        HallmarkEntry.TABLE_NAME,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
+    }
+
+    public Cursor getHallmarkById(String HallmarkId) {
+        return getReadableDatabase().query(
+                HallmarkEntry.TABLE_NAME,
+                null,
+                HallmarkEntry.ID + " LIKE ?",
+                new String[]{HallmarkId},
+                null,
+                null,
+                null);
+    }
+
+    public int deleteHallmark(String HallmarkId) {
+        return getWritableDatabase().delete(
+                HallmarkEntry.TABLE_NAME,
+                HallmarkEntry.ID + " LIKE ?",
+                new String[]{HallmarkId});
+    }
+
+    public int updateHallmark(Hallmark designer, String HallmarkId) {
+        return getWritableDatabase().update(
+                HallmarkEntry.TABLE_NAME,
+                designer.toContentValues(),
+                HallmarkEntry.ID + " LIKE ?",
+                new String[]{HallmarkId}
         );
     }
 
