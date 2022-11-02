@@ -32,6 +32,9 @@ import com.example.catalogos.dialog_package.SearchingDialog;
 import com.example.catalogos.gemstones_package.gemstones.GemstonesCursorAdapter;
 import com.example.catalogos.gemstones_package.gemstones_data.GemstonesContract;
 import com.example.catalogos.gemstones_package.gemstones_data.GemstonesContract.GemstoneEntry;
+import com.example.catalogos.hallmarks_package.hallmarks.HallmarksCursorAdapter;
+import com.example.catalogos.hallmarks_package.hallmarks_data.HallmarksContract;
+import com.example.catalogos.hallmarks_package.hallmarks_data.HallmarksContract.HallmarkEntry;
 import com.example.catalogos.jewels_package.jewels.JewelsByAuctionActivity;
 import com.example.catalogos.jeweltypes_package.jeweltypes.JewelTypesCursorAdapter;
 import com.example.catalogos.jeweltypes_package.jeweltypes_data.JewelTypesContract.JewelTypeEntry;
@@ -65,6 +68,7 @@ public class JewelSearchFragment extends Fragment {
     public static final String BUNDLE_DATA_COUNTRY = "country";
     public static final String BUNDLE_DATA_DESIGNER = "designer";
     public static final String BUNDLE_DATA_OWNER = "owner";
+    public static final String BUNDLE_DATA_HALLMARK = "hallmark";
     public static final String BUNDLE_DATA_GEMSTONE = "gemstone";
     public static final String BUNDLE_DATA_CUT = "cut";
     public static final String BUNDLE_DATA_PERIOD = "period";
@@ -78,6 +82,7 @@ public class JewelSearchFragment extends Fragment {
     private TextInputEditText mCountryField;
     private TextInputEditText mDesignerField;
     private TextInputEditText mOwnerField;
+    private TextInputEditText mHallmarkField;
     private TextInputEditText mGemstoneField;
     private TextInputEditText mCutField;
     private TextInputEditText mPeriodField;
@@ -92,6 +97,7 @@ public class JewelSearchFragment extends Fragment {
     private CursorAdapter mCountryAdapter;
     private CursorAdapter mDesignerAdapter;
     private CursorAdapter mOwnerAdapter;
+    private CursorAdapter mHallmarkAdapter;
     private CursorAdapter mGemstoneAdapter;
     private CursorAdapter mCutAdapter;
     private CursorAdapter mPeriodAdapter;
@@ -126,6 +132,7 @@ public class JewelSearchFragment extends Fragment {
         mCountryAdapter = new CountriesCursorAdapter (getActivity(), null);
         mDesignerAdapter = new DesignersCursorAdapter (getActivity(), null);
         mOwnerAdapter = new OwnersCursorAdapter (getActivity(), null);
+        mHallmarkAdapter = new HallmarksCursorAdapter (getActivity(), null);
         mGemstoneAdapter = new GemstonesCursorAdapter (getActivity(), null);
         mCutAdapter = new CutsCursorAdapter (getActivity(), null);
         mPeriodAdapter = new PeriodsCursorAdapter (getActivity(), null);
@@ -136,6 +143,7 @@ public class JewelSearchFragment extends Fragment {
         mCountryField = root.findViewById(R.id.tiet_country);
         mDesignerField = root.findViewById(R.id.tiet_designer);
         mOwnerField = root.findViewById(R.id.tiet_owner);
+        mHallmarkField = root.findViewById(R.id.tiet_hallmark);
         mGemstoneField = root.findViewById(R.id.tiet_gemstone);
         mCutField = root.findViewById(R.id.tiet_cut);
         mPeriodField = root.findViewById(R.id.tiet_period);
@@ -152,6 +160,7 @@ public class JewelSearchFragment extends Fragment {
         mCountryField.setCursorVisible (false);
         mDesignerField.setCursorVisible (false);
         mOwnerField.setCursorVisible (false);
+        mHallmarkField.setCursorVisible (false);
         mGemstoneField.setCursorVisible (false);
         mCutField.setCursorVisible (false);
         mPeriodField.setCursorVisible (false);
@@ -204,6 +213,13 @@ public class JewelSearchFragment extends Fragment {
             }
         });
 
+        mHallmarkField.setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick(View v){
+                onClickListener(mHallmarkAdapter, HallmarkEntry.TABLE_NAME, HallmarkEntry.NAME,R.string.searching_hallmarks,mHallmarkField );
+            }
+        });
+
         mGemstoneField.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick(View v){
@@ -242,6 +258,7 @@ public class JewelSearchFragment extends Fragment {
                 mCountryField.setText ("");
                 mDesignerField.setText ("");
                 mOwnerField.setText ("");
+                mHallmarkField.setText ("");
                 mGemstoneField.setText ("");
                 mCutField.setText ("");
                 mPeriodField.setText ("");
@@ -267,6 +284,7 @@ public class JewelSearchFragment extends Fragment {
         String country = mCountryField.getText ().toString ();
         String designer = mDesignerField.getText ().toString ();
         String owner = mOwnerField.getText ().toString ();
+        String hallmark = mHallmarkField.getText ().toString ();
         String gemstone = mGemstoneField.getText ().toString ();
         String cut = mCutField.getText ().toString ();
         String period = mPeriodField.getText ().toString ();
@@ -291,6 +309,8 @@ public class JewelSearchFragment extends Fragment {
             searchData.putString (BUNDLE_DATA_DESIGNER,designer);
         if(! owner.equals (""))
             searchData.putString (BUNDLE_DATA_OWNER,owner);
+        if(! hallmark.equals (""))
+            searchData.putString (BUNDLE_DATA_HALLMARK,hallmark);
         if(! gemstone.equals (""))
             searchData.putString (BUNDLE_DATA_GEMSTONE,gemstone);
         if(! cut.equals (""))

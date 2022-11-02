@@ -6,6 +6,8 @@ import android.database.Cursor;
 import com.example.catalogos.cuts_package.cuts_data.CutsContract.CutEntry;
 import com.example.catalogos.designers_package.designers_data.DesignersContract.DesignerEntry;
 import com.example.catalogos.gemstones_package.gemstones_data.GemstonesContract.GemstoneEntry;
+import com.example.catalogos.hallmarks_package.hallmarks_data.HallmarksContract;
+import com.example.catalogos.hallmarks_package.hallmarks_data.HallmarksContract.HallmarkEntry;
 import com.example.catalogos.jewels_package.jewels_data.JewelsContract.JewelEntry;
 import com.example.catalogos.lots_package.lots_data.LotsContract;
 import com.example.catalogos.owners_package.owners_data.OwnersContract.OwnerEntry;
@@ -42,8 +44,10 @@ public class Jewel {
     private String avatarUri;
 
     private ArrayList<String> owners = new ArrayList<> ();
+    private ArrayList<String> hallmarks = new ArrayList<> ();
     private ArrayList<String[]> gemstonesAndCut = new ArrayList<> ();
     private ArrayList ownersKeys = new ArrayList<> ();
+    private ArrayList hallmarksKeys = new ArrayList<> ();
     private ArrayList gemstonesAndCutKeys = new ArrayList<> ();
     private String lot;
 
@@ -80,7 +84,9 @@ public class Jewel {
         lot = cursor.getString (cursor.getColumnIndex (JewelEntry.LOT));
 
         owners = decodeOwners(cursor);
+        hallmarks = decodeHallmarks(cursor);
         ownersKeys = decodeOwnersKeys(cursor);
+        hallmarksKeys = decodeHallmarksKeys(cursor);
 
         gemstonesAndCut = decodeGemstones(cursor);
         gemstonesAndCutKeys = decodeGemstonesKeys(cursor);
@@ -138,6 +144,23 @@ public class Jewel {
         return list;
     }
 
+    private ArrayList<String> decodeHallmarks(Cursor cursor){
+        ArrayList<String> list = new ArrayList<> ();
+        try {
+            cursor.moveToPosition (-1);
+            while (cursor.moveToNext()){
+                String hallmark = cursor.getString (cursor.getColumnIndex(HallmarkEntry.NAME));
+                if(hallmark != null && !list.contains (hallmark))
+                    list.add (hallmark);
+            }
+        } finally {
+//            if(cursor != null && !cursor.isClosed()){
+//                cursor.close();
+//            }
+        }
+        return list;
+    }
+
     private ArrayList<Integer> decodeOwnersKeys(Cursor cursor){
         ArrayList<Integer> list = new ArrayList<> ();
         try {
@@ -146,6 +169,23 @@ public class Jewel {
                 int ownerKey = cursor.getInt (cursor.getColumnIndex(OwnerEntry.ALIAS__ID));
                 if(ownerKey != 0 && !list.contains (ownerKey))
                     list.add (ownerKey);
+            }
+        } finally {
+//            if(cursor != null && !cursor.isClosed()){
+//                cursor.close();
+//            }
+        }
+        return list;
+    }
+
+    private ArrayList<Integer> decodeHallmarksKeys(Cursor cursor){
+        ArrayList<Integer> list = new ArrayList<> ();
+        try {
+            cursor.moveToPosition (-1);
+            while (cursor.moveToNext()){
+                int hallmarkKey = cursor.getInt (cursor.getColumnIndex(HallmarkEntry.ALIAS__ID));
+                if(hallmarkKey != 0 && !list.contains (hallmarkKey))
+                    list.add (hallmarkKey);
             }
         } finally {
 //            if(cursor != null && !cursor.isClosed()){
@@ -272,6 +312,10 @@ public class Jewel {
     public ArrayList<String> getOwners(){
         return owners;
     }
+    
+    public ArrayList<String> getHallmarks(){
+        return hallmarks;
+    }
 
     public ArrayList getOwnersKeys(){
         return ownersKeys;
@@ -298,4 +342,7 @@ public class Jewel {
     }
 
 
+    public ArrayList getHallmarksKeys(){
+        return hallmarksKeys;
+    }
 }

@@ -17,6 +17,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
@@ -41,6 +42,11 @@ import com.example.catalogos.gemstones_cuts_package.gemstones_cuts_data.Gemstone
 import com.example.catalogos.gemstones_cuts_package.gemstones_cuts_data.JewelsGemstonesCuts;
 import com.example.catalogos.gemstones_package.add_edit_gemstone.AddEditGemstoneActivity;
 import com.example.catalogos.gemstones_package.gemstones_data.GemstonesContract.GemstoneEntry;
+import com.example.catalogos.hallmarks_package.add_edit_hallmark.AddEditHallmarkActivity;
+import com.example.catalogos.hallmarks_package.hallmarks.HallmarksCursorAdapter;
+import com.example.catalogos.hallmarks_package.hallmarks_data.HallmarksContract;
+import com.example.catalogos.hallmarks_package.hallmarks_data.HallmarksContract.HallmarkEntry;
+import com.example.catalogos.jewels_hallmarks_package.jewels_data.JewelsHallmarks;
 import com.example.catalogos.jewels_owners_package.jewels_data.JewelsOwners;
 import com.example.catalogos.jewels_package.jewels_data.Jewel;
 import com.example.catalogos.jewels_package.jewels_data.JewelsContract.JewelEntry;
@@ -91,6 +97,7 @@ public class AddEditJewelFragment extends Fragment {
     private static final String JEWEL_TYPE_FK = "jewelType";
     private static final String PERIOD_FK = "period";
     private static final String OWNERS_FK = "owners";
+    private static final String HALLMARKS_FK = "hallmarks";
     private static final String GEMSTONES_FK = "gemstones";
     private static final String LOTS_FK = "lots";
 
@@ -109,8 +116,10 @@ public class AddEditJewelFragment extends Fragment {
     private TextInputEditText mLotField;
     private TextView mGemstoneField;
     private TextView mOwnerField;
+    private TextView mHallmarkField;
     private Button tvTitleGemstones;
     private Button tvTitleOwners;
+    private Button tvTitleHallmarks;
     private TextInputEditText mObsField;
 
     private TextInputLayout mJewelTypeLabel;
@@ -132,11 +141,13 @@ public class AddEditJewelFragment extends Fragment {
     private DesignersCursorAdapter mDesignerAdapter;
     private PeriodsCursorAdapter mPeriodAdapter;
     private OwnersCursorAdapter mOwnerAdapter;
+    private HallmarksCursorAdapter mHallmarkAdapter;
     private GemstonesCutsCursorAdapter gemstonesCutsCursorAdapter;
     private LotsCursorAdapter mLotAdapter;
 
     private LinearLayout llGemstones;
     private LinearLayout llOwners;
+    private LinearLayout llHallmarks;
     private ArrayList<Integer> ownwersKeys;
     private int jewel_Id;
     private SearchingDialog searchingDialog;
@@ -168,6 +179,8 @@ public class AddEditJewelFragment extends Fragment {
 
         keysMultiToReturn.put (OWNERS_FK,new ArrayList<> ());
         textsMultiToReturn.put (OWNERS_FK,new ArrayList<> ());
+        keysMultiToReturn.put (HALLMARKS_FK,new ArrayList<> ());
+        textsMultiToReturn.put (HALLMARKS_FK,new ArrayList<> ());
         keysMultiToReturn.put (GEMSTONES_FK,new ArrayList<> ());
         textsMultiToReturn.put (GEMSTONES_FK,new ArrayList<> ());
 
@@ -192,10 +205,12 @@ public class AddEditJewelFragment extends Fragment {
 
         llGemstones = new LinearLayout (getActivity (),null);
         llOwners = new LinearLayout (getActivity (),null);
+        llHallmarks = new LinearLayout (getActivity (),null);
 
         Cursor cursor = dbHelper.getAllJewelsGemstonesCuts ();
         gemstonesCutsCursorAdapter = new GemstonesCutsCursorAdapter (getActivity(), cursor);
         mOwnerAdapter = new OwnersCursorAdapter (getActivity(), null);
+        mHallmarkAdapter = new HallmarksCursorAdapter (getActivity(), null);
 
         // Referencias UI
         mSaveButton = getActivity().findViewById(R.id.fab);
@@ -210,10 +225,13 @@ public class AddEditJewelFragment extends Fragment {
 
         llGemstones = root.findViewById (R.id.ll_gemstones);
         llOwners = root.findViewById (R.id.ll_owners);
+        llHallmarks = root.findViewById (R.id.ll_hallmarks);
         tvTitleGemstones = root.findViewById (R.id.tv_title_gemstones);
         tvTitleOwners = root.findViewById (R.id.tv_title_owners);
+        tvTitleHallmarks = root.findViewById (R.id.tv_title_hallmarks);
         mGemstoneField = root.findViewById(R.id.l_gemstones);
         mOwnerField = root.findViewById(R.id.l_owners);
+        mHallmarkField = root.findViewById(R.id.l_hallmarks);
 
         mObsField = root.findViewById(R.id.et_obs);
 
@@ -290,6 +308,18 @@ public class AddEditJewelFragment extends Fragment {
                         R.string.searching_owners,mOwnerField,OWNERS_FK,
                         AddEditOwnerActivity.class,textsMultiToReturn.get (OWNERS_FK) );
 //                ownersSelected = elementsSelected;
+            }
+        });
+
+        tvTitleHallmarks.setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick(View v){
+                mHallmarkAdapter.setMultiSelector (true);
+                onClickMultiListener(mHallmarkAdapter, HallmarkEntry.TABLE_NAME,
+                        HallmarkEntry.NAME,
+                        R.string.searching_hallmarks,mHallmarkField,HALLMARKS_FK,
+                        AddEditHallmarkActivity.class,textsMultiToReturn.get (HALLMARKS_FK) );
+//                hallmarksSelected = elementsSelected;
             }
         });
 
@@ -467,7 +497,7 @@ public class AddEditJewelFragment extends Fragment {
         int jewelTypeFK = keysToReturn.get(JEWEL_TYPE_FK);
         int periodFK = keysToReturn.get(PERIOD_FK);
         int designerFK = keysToReturn.get(DESIGNER_FK);
-        ArrayList<Object> ownersFK = keysMultiToReturn.get(OWNERS_FK);
+//        ArrayList<Object> ownersFK = keysMultiToReturn.get(OWNERS_FK);
 
         String oldImageName;
         String newImageName = null;
@@ -527,6 +557,7 @@ public class AddEditJewelFragment extends Fragment {
         mObsField.setText(jewel.getObs ());
 
         mOwnerField.setText (getTextStream (jewel.getOwners ()));
+        mHallmarkField.setText (getTextStream (jewel.getHallmarks ()));
         mGemstoneField.setText (getTextStreamFromArray (jewel.getGemstonesAndCut ()));
 
         keysToReturn.put (JEWEL_TYPE_FK,jewel.getJewelTypeId ());
@@ -569,6 +600,8 @@ public class AddEditJewelFragment extends Fragment {
 //                    ownersSelected = jewel.getOwners();
                     keysMultiToReturn.put (OWNERS_FK,jewel.getOwnersKeys());
                     textsMultiToReturn.put (OWNERS_FK,jewel.getOwners ());
+                    keysMultiToReturn.put (HALLMARKS_FK,jewel.getHallmarksKeys());
+                    textsMultiToReturn.put (HALLMARKS_FK,jewel.getHallmarks ());
                     keysMultiToReturn.put (GEMSTONES_FK,jewel.getGemstonesAndCutKeys ());
                     textsMultiToReturn.put (GEMSTONES_FK,jewel.getGemstonesAndCut ());
                     cursor.moveToFirst ();
@@ -609,6 +642,14 @@ public class AddEditJewelFragment extends Fragment {
                 for (int i = 0; i < Objects.requireNonNull (ownersKeys).size (); i++) {
                     int ownerKey = (int) ownersKeys.get(i);
                     result = dbHelper.saveJewelsOwners (new JewelsOwners (jewel_Id, ownerKey)) > 0;
+                    if(!result)
+                        return result;
+                }
+                dbHelper.deleteJewelsHallmarks (jewel_Id);
+                ArrayList hallmarksKeys = keysMultiToReturn.get (HALLMARKS_FK);
+                for (int i = 0; i < Objects.requireNonNull (hallmarksKeys).size (); i++) {
+                    int hallmarkKey = (int) hallmarksKeys.get(i);
+                    result = dbHelper.saveJewelsHallmarks (new JewelsHallmarks (jewel_Id, hallmarkKey)) > 0;
                     if(!result)
                         return result;
                 }

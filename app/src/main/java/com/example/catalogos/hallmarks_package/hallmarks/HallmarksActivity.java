@@ -1,4 +1,4 @@
-package com.example.catalogos.owners_package.owners;
+package com.example.catalogos.hallmarks_package.hallmarks;
 
 import android.os.Bundle;
 
@@ -8,31 +8,32 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.catalogos.R;
+import com.example.catalogos.hallmarks_package.hallmarks.HallmarksFragment;
 
 
-public class OwnersActivity extends AppCompatActivity {
+public class HallmarksActivity extends AppCompatActivity {
 
-    public static final String EXTRA_OWNER_ID = "extra_owner_id";
+    public static final String EXTRA_HALLMARK_ID = "extra_hallmark_id";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_owners);
+        setContentView(R.layout.activity_hallmarks);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Poner el botón de marcha atrás
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         FragmentManager fragmentManager= getSupportFragmentManager();
-        OwnersFragment fragment = (OwnersFragment) fragmentManager.findFragmentById (R.id.fragment_owners);
+        HallmarksFragment fragment = (HallmarksFragment) fragmentManager.findFragmentById (R.id.fragment_hallmarks);
 
 
         if (fragment == null) {
-            fragment = OwnersFragment.newInstance();
+            fragment = HallmarksFragment.newInstance();
 
             FragmentManager fm =getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            ft.add(R.id.owners_container, fragment);
+            ft.add(R.id.hallmarks_container, fragment);
             ft.commit();
         }
 

@@ -12,6 +12,7 @@ public class HallmarksContract {
 
         public static final String ID = "id";
         public static final String NAME = "hallmark";
+//        public static final String HALLMARK_TYPE = "hallmarkType";
         public static final String AVATAR_URI = "avatarUri";
         // Unambigous names
         public static final String ALTER__ID = TABLE_NAME + "." + _ID;

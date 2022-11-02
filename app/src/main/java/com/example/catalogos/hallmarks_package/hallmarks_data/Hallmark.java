@@ -19,6 +19,7 @@ public class Hallmark {
 
     private String id;
     private String name;
+    private String hallmarkType;
     private String avatarUri;
 
     public Hallmark(String name, String avatarUri) {
@@ -30,6 +31,7 @@ public class Hallmark {
     public Hallmark(Cursor cursor) throws ParseException{
         id = cursor.getString(cursor.getColumnIndex(HallmarkEntry.ID));
         name = cursor.getString(cursor.getColumnIndex(HallmarkEntry.NAME));
+//        hallmarkType = cursor.getString(cursor.getColumnIndex(HallmarkEntry.HALLMARK_TYPE));
         avatarUri = cursor.getString(cursor.getColumnIndex(HallmarkEntry.AVATAR_URI));
     }
 
@@ -37,6 +39,7 @@ public class Hallmark {
         ContentValues values = new ContentValues();
         values.put(HallmarkEntry.ID, id);
         values.put(HallmarkEntry.NAME, name);
+//        values.put(HallmarkEntry.HALLMARK_TYPE, hallmarkType);
         values.put(HallmarkEntry.AVATAR_URI, avatarUri);
         return values;
     }
@@ -51,6 +54,10 @@ public class Hallmark {
 
     public String getAvatarUri() {
         return avatarUri;
+    }
+
+    public String getHallmarkType(){
+        return hallmarkType;
     }
 
     public void setAvatarUri(String avatarUri){

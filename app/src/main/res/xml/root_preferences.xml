@@ -15,13 +15,16 @@
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="updateDB"
-            app:summary="¿Actualizar (sí) o Crear (no) una nueva copia de los datos en cada copia de seguridad"
-            app:summaryOff="Crear"
-            app:summaryOn="Actualizar"
+
+            app:summaryOff="Crear una nueva Copia de seguridad"
+            app:summaryOn="Actualizar Copia de seguridad ya guardada"
             app:switchTextOff="Crear"
             app:switchTextOn="Actualizar"
             app:title="@string/update_db" />
 
+
+
     </PreferenceCategory>
+
 
 </PreferenceScreen>

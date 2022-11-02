@@ -6,6 +6,7 @@ import static com.example.catalogos.hallmarks_package.hallmarks_data.Hallmark.HA
 import static com.example.catalogos.hallmarks_package.hallmarks_data.Hallmark.HALLMARK_FOLDER;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -18,7 +19,9 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -26,9 +29,16 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.catalogos.R;
+import com.example.catalogos.countries_package.add_edit_country.AddEditCountryActivity;
+import com.example.catalogos.countries_package.countries.CountriesCursorAdapter;
+import com.example.catalogos.countries_package.countries_data.CountriesContract;
 import com.example.catalogos.database.DbHelper;
+import com.example.catalogos.dialog_package.SearchingArrayDialog;
+import com.example.catalogos.dialog_package.SearchingDialog;
 import com.example.catalogos.google_search.ItemListActivity;
+import com.example.catalogos.hallmarks_package.hallmarks.HallmarkTypeArrayAdapter;
 import com.example.catalogos.hallmarks_package.hallmarks_data.Hallmark;
+import com.example.catalogos.hallmarks_package.hallmarks_data.HallmarkType;
 import com.example.catalogos.services.DataConvert;
 import com.example.catalogos.services.ImageSaver;
 import com.example.catalogos.services.SavePictureFromURI;
@@ -40,6 +50,9 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.apache.commons.io.FilenameUtils;
 
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Vista para creación/edición de un subasta
@@ -49,13 +62,19 @@ public class AddEditHallmarkFragment extends Fragment {
     private static final int REQUEST_SEARCH_PICTURE_FROM_WEB_CODE = 1;
     private static final int REQUEST_LOAD_IMAGE_FROM_MEMORY_CODE = 2;
 
+    Map<String,Integer> keysToReturn = new HashMap<> ();
+
+    private ArrayAdapter<String> mHallmarkTypeAdapter;
+
     private String mHallmarkId;
 
     private DbHelper dbHelper;
 
     private FloatingActionButton mSaveButton;
     private TextInputEditText mNameField;
+//    private TextInputEditText mHallmarkTypeField;
     private TextInputLayout mNameLabel;
+//    private TextInputLayout mHallmarkTypeLabel;
     private Button btnSearchWebImg,btnSearchLocalImg;
     private ImageView mAvatar;
     private String strURLAvatar;
@@ -94,6 +113,8 @@ public class AddEditHallmarkFragment extends Fragment {
         mAvatar = root.findViewById(R.id.iv_avatar);
         mNameLabel = root.findViewById(R.id.til_name);
         mNameField = root.findViewById(R.id.et_name);
+//        mHallmarkTypeLabel = root.findViewById(R.id.til_hallmark_type);
+//        mHallmarkTypeField = root.findViewById(R.id.et_hallmark_type);
 
         btnSearchWebImg = root.findViewById(R.id.btn_search_web_img);
         btnSearchLocalImg = root.findViewById(R.id.btn_search_local_img);
@@ -120,7 +141,21 @@ public class AddEditHallmarkFragment extends Fragment {
             }
         });
 
+//
+//        mHallmarkTypeField.setOnClickListener (new View.OnClickListener () {
+//            @Override
+//            public void onClick(View v){
+//                onClickListener (mHallmarkTypeAdapter,R.string.searching_hallmark_type, mHallmarkTypeField);
+//            }
+//        });
+
         dbHelper = new DbHelper(getActivity());
+
+        Set<String> listSet = new HallmarkType (getActivity ()).getListOfHallmarksTypes ();
+        String[] listArray = listSet.toArray (new String[listSet.size ()]);
+        mHallmarkTypeAdapter =
+                new ArrayAdapter<>(getActivity (), android.R.layout.simple_list_item_1, listArray);
+
 
         // Carga de datos
         if (mHallmarkId != null) {
@@ -130,8 +165,24 @@ public class AddEditHallmarkFragment extends Fragment {
         return root;
     }
 
+
+    private void onClickListener(ArrayAdapter<String> adapter, int title, TextInputEditText tiet){
+        // Creamos un diálogo de búsqueda y lo abrimos
+        SearchingArrayDialog searchingArrayDialog = new SearchingArrayDialog (getActivity (), adapter, title);
+
+        searchingArrayDialog.setOnDismissListener (new DialogInterface.OnDismissListener () {
+//            int ikey = key;
+
+            @Override
+            public void onDismiss(DialogInterface dialog){
+//                tiet.setText (searchingArrayDialog.textReturned);
+            }
+        });
+    }
+
+
     private void openSearchPictures(){
-        String textToSearch = "persone+" +  mNameField.getText ().toString();
+        String textToSearch = "hallmark+" +  mNameField.getText ().toString();
 
         Intent intent = new Intent(getActivity(), ItemListActivity.class);
         intent.putExtra(ItemListActivity.TEXT_TO_SEARCH, textToSearch);
@@ -197,6 +248,12 @@ public class AddEditHallmarkFragment extends Fragment {
             mNameLabel.setError(getString(R.string.field_error));
             error = true;
         }
+//
+//        String hallmarkType = mHallmarkTypeField.getText ().toString ();
+//        if (TextUtils.isEmpty(hallmarkType)) {
+//            mHallmarkTypeLabel.setError(getString(R.string.field_error));
+//            error = true;
+//        }
 
         if (error) {
             return;
@@ -261,6 +318,7 @@ public class AddEditHallmarkFragment extends Fragment {
 
     private void showHallmark(Hallmark hallmark) {
         mNameField.setText(hallmark.getName());
+//        mHallmarkTypeField.setText(hallmark.getHallmarkType ());
         strURLAvatar = HALLMARK_FILE_PATH + hallmark.getAvatarUri ();
         if (hallmark.getAvatarUri () == null) {
             mAvatar.setImageResource (R.drawable.ic_baseline_error_24);

@@ -22,7 +22,7 @@ public class AddEditHallmarkActivity extends AppCompatActivity {
 
         String hallmarkId = getIntent().getStringExtra(HallmarksActivity.EXTRA_HALLMARK_ID);
 
-        setTitle(hallmarkId == null ? "Añadir Propietario" : "Editar Propietario");
+        setTitle(hallmarkId == null ? getString(R.string.add_hallmark) : getString(R.string.edit_hallmark));
 
         AddEditHallmarkFragment addEditHallmarkFragment = (AddEditHallmarkFragment)
                 getSupportFragmentManager().findFragmentById(R.id.add_edit_hallmark_container);

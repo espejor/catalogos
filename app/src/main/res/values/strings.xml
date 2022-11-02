@@ -226,5 +226,14 @@
     <string name="external">Externo</string>
     <string name="cancel">Cancelar</string>
     <string name="hallmarks">Contrastes</string>
+    <string name="list_of_hallmarks_types">Lista de Tipos de Contrastes</string>
+    <string name="hallmark_type">Tipo de Contraste</string>
+    <string name="searching_hallmark_type">Buscar Tipo de Contraste</string>
+    <string name="searching_hallmarks">Buscar Contraste</string>
+    <string name="add_owner">Añadir Propietario</string>
+    <string name="edit_owner">Editar Propietario</string>
+    <string name="add_hallmark">Agregar Contraste</string>
+    <string name="edit_hallmark">Editar Contraste</string>
+    <string name="hallmark">Contraste</string>
 
 </resources>

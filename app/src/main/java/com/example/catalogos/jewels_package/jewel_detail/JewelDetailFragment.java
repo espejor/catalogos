@@ -56,6 +56,7 @@ public class JewelDetailFragment extends Fragment {
 
     private TextView mGemstoneField;
     private TextView mOwnerField;
+    private TextView mHallmarkField;
     private int mFkAuctionId;
 
 
@@ -96,6 +97,7 @@ public class JewelDetailFragment extends Fragment {
 
         mGemstoneField = root.findViewById(R.id.l_gemstones);
         mOwnerField = root.findViewById(R.id.l_owners);
+        mHallmarkField = root.findViewById(R.id.l_hallmarks);
 
         
         mAvatar = getActivity().findViewById(R.id.iv_avatar);
@@ -158,6 +160,7 @@ public class JewelDetailFragment extends Fragment {
         mObsField.setText(jewel.getObs ());
 
         mOwnerField.setText (getTextStream (jewel.getOwners ()));
+        mHallmarkField.setText (getTextStream (jewel.getHallmarks ()));
         mGemstoneField.setText (getTextStreamFromArray (jewel.getGemstonesAndCut ()));
 
         mFkAuctionId = jewel.getAuctionId ();

@@ -24,6 +24,8 @@ import androidx.core.content.FileProvider;
 import com.example.catalogos.auctions_house_package.auctions_house_data.AuctionsHouseContract.AuctionHouseEntry;
 import com.example.catalogos.cuts_package.cuts_data.CutsContract.CutEntry;
 import com.example.catalogos.gemstones_package.gemstones_data.GemstonesContract.GemstoneEntry;
+import com.example.catalogos.hallmarks_package.hallmarks_data.HallmarksContract;
+import com.example.catalogos.hallmarks_package.hallmarks_data.HallmarksContract.HallmarkEntry;
 import com.example.catalogos.jeweltypes_package.jeweltypes_data.JewelTypesContract.JewelTypeEntry;
 import com.example.catalogos.owners_package.owners_data.OwnersContract.OwnerEntry;
 import com.itextpdf.io.image.ImageData;
@@ -68,7 +70,7 @@ public class PDFCreator {
     private final String fileName;
     File file;
     private Cursor cursor = null;
-    int columnsList = 6;
+    int columnsList = 7;
     private Document document;
     private PdfWriter writer;
     private PdfDocument pdfDocument;
@@ -88,11 +90,14 @@ public class PDFCreator {
     private Text txtWaterMark;
 
     private Cell currentOwnerCell;
+    private Cell currentHallmarkCell;
     private Cell currentGemstoneCell;
     private boolean currentOwnerCellPrinted = true;
+    private boolean currentHallmarkCellPrinted = true;
     private boolean currentGemstoneCellPrinted = true;
-
+    
     com.itextpdf.layout.element.List ownersList = new com.itextpdf.layout.element.List();
+    com.itextpdf.layout.element.List hallmarksList = new com.itextpdf.layout.element.List();
     com.itextpdf.layout.element.List gemstonesList = new com.itextpdf.layout.element.List();
 
     private PdfFont fBold;
@@ -100,6 +105,7 @@ public class PDFCreator {
     private PdfFont fItalic;
     private Uri uri;
     private String oldOwner;
+    private String oldHallmark;
     private ArrayList<String[]> gemstonesPrinted = new ArrayList<> ();
 
     public PDFCreator(Context context,String filename){
@@ -134,22 +140,11 @@ public class PDFCreator {
     }
 
     public PDFCreator(Context context){
-//        Date date = new Date();
-//        String year = String.valueOf (date.getYear ());
-//        String month = String.valueOf (date.getMonth ());
-//        String day = String.valueOf (date.getDay ());
-//        String hour = String.valueOf (date.getHours ());
-//        String min = String.valueOf (date.getMinutes ());
-//        String sec = String.valueOf (date.getSeconds ());
-//        String dateStr = year + month+day+hour+min+sec;
-
         this (context,"catalogoTemp");
     }
 
     private void createPDF(){
         String pdfPath = context.getFilesDir () + "/tempPDF";
-//            pdfPath = "/storage/sdcard0/"
-//                    + Environment.DIRECTORY_DOWNLOADS;
 
         File pdfDir = new File(pdfPath);
         if (! pdfDir.exists ())
@@ -238,9 +233,6 @@ public class PDFCreator {
         String oldAuction = "";
         String oldLot = "";
         String oldJewelId = "";
-//        String oldOwner = "";
-        String oldGemstone = "";
-        String oldCut = "";
 
         // Recorrer el cursor para imprimir todas las joyas
         for (int i = 0; i < cursor.getCount (); i++) {
@@ -251,6 +243,7 @@ public class PDFCreator {
             String entryLot =  JewelEntry.LOT;
             String entryJewelId = JewelEntry.ID;
             String entryOwner =  OwnerEntry.NAME;
+            String entryHallmark =  HallmarkEntry.NAME;
             String entryGemstone =  GemstoneEntry.NAME;
             String entryCut =  CutEntry.NAME;
 
@@ -264,6 +257,8 @@ public class PDFCreator {
             String jewelId = cursor.getString(column);
             column = cursor.getColumnIndex(entryOwner);
             String owner = cursor.getString(column);
+            column = cursor.getColumnIndex(entryHallmark);
+            String hallmark = cursor.getString(column);
 //            column = cursor.getColumnIndex(entryGemstone);
 //            String gemstone = cursor.getString(column);
 //            column = cursor.getColumnIndex(entryCut);
@@ -274,6 +269,10 @@ public class PDFCreator {
                     table.addCell (currentOwnerCell);
                     currentOwnerCellPrinted = true;
                 }
+                if (!currentHallmarkCellPrinted) {
+                    table.addCell (currentHallmarkCell);
+                    currentHallmarkCellPrinted = true;
+                }
                 if (!currentGemstoneCellPrinted) {
                     table.addCell (currentGemstoneCell);
                     currentGemstoneCellPrinted = true;
@@ -283,11 +282,16 @@ public class PDFCreator {
                 oldLot = "";
                 oldJewelId = "";
                 oldOwner = "";
+                oldHallmark = "";
             }
             if(! lot.equals (oldLot)){  // Cambio de lote
                 if (!currentOwnerCellPrinted) {
                     table.addCell (currentOwnerCell);
                     currentOwnerCellPrinted = true;
+                }
+                if (!currentHallmarkCellPrinted) {
+                    table.addCell (currentHallmarkCell);
+                    currentHallmarkCellPrinted = true;
                 }
                 if (!currentGemstoneCellPrinted) {
                     table.addCell (currentGemstoneCell);
@@ -295,34 +299,47 @@ public class PDFCreator {
                 }
                 printLot(lot,table);    // Imprimimos el lote
                 oldLot = lot;           // actualizar token
-                printJewel(cursor,table,true, true, true);
+                printJewel(cursor,table,true, true, true,true);
                 oldJewelId = jewelId;   // actualizar token
                 oldOwner = owner;       // actualizar token
+                oldHallmark = hallmark;       // actualizar token
             }else {   // Es el mismo lote
                 if(! jewelId.equals (oldJewelId)) {  // Cambio de Joya
                     if (!currentOwnerCellPrinted) {
                         table.addCell (currentOwnerCell);
                         currentOwnerCellPrinted = true;
                     }
+                    if (!currentHallmarkCellPrinted) {
+                        table.addCell (currentHallmarkCell);
+                        currentHallmarkCellPrinted = true;
+                    }
                     if (!currentGemstoneCellPrinted) {
                         table.addCell (currentGemstoneCell);
                         currentGemstoneCellPrinted = true;
                     }
-                    printJewel (cursor, table, false, true,true);
+                    printJewel (cursor, table, false, true,true,true);
                     oldJewelId = jewelId;// actualizar token
                     oldOwner = owner;   // actualizar token
+                    oldHallmark = owner;   // actualizar token
                 }else{  // Es la misma joya
-                    if (! owner.equals (oldOwner)) {    //Cambio de Propietario
-                        printJewel (cursor, table, false, false, true);
+                    if (owner != null && ! owner.equals (oldOwner)) {    //Cambio de Propietario
+                        printJewel (cursor, table, false, false, true,true);
                         oldOwner = owner;   // actualizar token
                     } else {        // Es el mismo propietario
-                        printJewel (cursor, table, false, false, false);
+                        if (hallmark != null && ! hallmark.equals (oldHallmark)) {    //Cambio de Punzón
+                            printJewel (cursor, table, false, false, false,true);
+                            oldHallmark = hallmark;   // actualizar token
+                        } else {        // Es el mismo propietario
+                            printJewel (cursor, table, false, false, false,false);
+                        }
                     }
                 }
             }
         }
         if (!currentOwnerCellPrinted)
             table.addCell (currentOwnerCell);
+        if (!currentHallmarkCellPrinted)
+            table.addCell (currentHallmarkCell);
         if (!currentGemstoneCellPrinted)
             table.addCell (currentGemstoneCell);
 
@@ -338,11 +355,12 @@ public class PDFCreator {
     }
 
 
-    private void printJewel(Cursor cursor, Table table, boolean isFirstJewelOfLot, boolean isDistinctJewel, boolean isDistincOwnerOfJewel){
+    private void printJewel(Cursor cursor, Table table, boolean isFirstJewelOfLot, boolean isDistinctJewel, boolean isDistincOwnerOfJewel, boolean isDistincHallmarkOfJewel){
 
         String entryJewelType = JewelTypeEntry.NAME;
         String entryDesigner =  DesignerEntry.NAME;
         String entryOwner =  OwnerEntry.NAME;
+        String entryHallmark =  HallmarkEntry.NAME;
         String entryGemstone =  GemstoneEntry.NAME;
         String entryCut =  CutEntry.NAME;
 
@@ -354,6 +372,8 @@ public class PDFCreator {
         String designer = cursor.getString(column);
         column = cursor.getColumnIndex(entryOwner);
         String owner = cursor.getString(column);
+        column = cursor.getColumnIndex(entryHallmark);
+        String hallmark = cursor.getString(column);
         column = cursor.getColumnIndex(entryGemstone);
         String gemstone = cursor.getString(column);
         column = cursor.getColumnIndex(entryCut);
@@ -380,7 +400,7 @@ public class PDFCreator {
 
         Cell c = null;
         // Celdas vacías de lote
-        if(!isFirstJewelOfLot && currentOwnerCellPrinted && currentGemstoneCellPrinted) {// No es la primera joya del lote. Se deja celda  vacía
+        if(!isFirstJewelOfLot && currentOwnerCellPrinted && currentHallmarkCellPrinted && currentGemstoneCellPrinted) {// No es la primera joya del lote. Se deja celda  vacía
             c = new Cell ()
                     .setBorder(Border.NO_BORDER)
                     .setBorderBottom (new SolidBorder (1F));
@@ -392,6 +412,7 @@ public class PDFCreator {
             gemstonesPrinted.clear ();
             gemstonesList = new com.itextpdf.layout.element.List();
             ownersList = new com.itextpdf.layout.element.List();
+            hallmarksList = new com.itextpdf.layout.element.List();
 
             // Imprimimos primer valor de celda con valores múltiples
             ownersList.add(owner != null ? owner : "");
@@ -401,6 +422,14 @@ public class PDFCreator {
                     .add (new Paragraph (owner != null ? "Propietarios:\n" : ""))
                     .add (ownersList);
             currentOwnerCellPrinted = false;
+            
+            hallmarksList.add(hallmark != null ? hallmark : "");
+            currentHallmarkCell = new Cell ()
+                    .setBorder (Border.NO_BORDER)
+                    .setBorderBottom (new SolidBorder (1F))
+                    .add (new Paragraph (hallmark != null ? "Contrastes:\n" : ""))
+                    .add (hallmarksList);
+            currentHallmarkCellPrinted = false;
 
             gemstonesList.add((gemstone != null ? gemstone : "") + (cut != null ? " corte " + cut : ""));
             currentGemstoneCell = new Cell ()
@@ -417,9 +446,14 @@ public class PDFCreator {
                 // Imprimimos siguiente valor de celda con valores múltiples
                 ownersList.add(owner != null ? owner : "");
             }else{  // Mismo propietario
-                if(!isInList (gemstonesPrinted,new String[]{gemstone,cut})) {
-                    gemstonesPrinted.add(new String[]{gemstone,cut});
-                    gemstonesList.add(gemstone + (cut != null ? " corte " + cut : ""));
+                if (isDistincHallmarkOfJewel) {    // Nuevo punzón
+                    // Imprimimos siguiente valor de celda con valores múltiples
+                    hallmarksList.add(hallmark != null ? hallmark : "");
+                }else{  // Mismo punzón
+                    if(!isInList (gemstonesPrinted,new String[]{gemstone,cut})) {
+                        gemstonesPrinted.add(new String[]{gemstone,cut});
+                        gemstonesList.add(gemstone + (cut != null ? " corte " + cut : ""));
+                    }
                 }
             }
         }

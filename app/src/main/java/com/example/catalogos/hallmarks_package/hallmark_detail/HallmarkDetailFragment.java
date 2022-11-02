@@ -113,7 +113,7 @@ public class HallmarkDetailFragment extends Fragment {
 
     private void showHallmark(Hallmark hallmark) {
         mCollapsingView.setTitle(hallmark.getName());
-//        String folderPath = App.getContext ().getFilesDir().getAbsolutePath();
+
         String filePath = HALLMARK_FILE_PATH;
         if (hallmark.getAvatarUri () == null) {
             mAvatar.setImageResource (R.drawable.ic_baseline_error_24);

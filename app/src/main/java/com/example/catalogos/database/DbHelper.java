@@ -4,6 +4,7 @@ import static android.provider.BaseColumns._ID;
 import static com.example.catalogos.auctions_house_package.auctions_house_data.AuctionsHouseContract.AuctionHouseEntry;
 import static com.example.catalogos.auctions_package.auctionsdata.AuctionsContract.AuctionEntry;
 import static com.example.catalogos.countries_package.countries_data.CountriesContract.CountryEntry;
+import static com.example.catalogos.database.mix_tables.JewelsHallmarksContract.*;
 import static com.example.catalogos.designers_package.designers_data.DesignersContract.DesignerEntry;
 import static com.example.catalogos.gemstones_package.gemstones_data.GemstonesContract.GemstoneEntry;
 import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragment.BUNDLE_DATA_AUCTION_HOUSE;
@@ -17,10 +18,10 @@ import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragm
 import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragment.BUNDLE_DATA_JEWEL_TYPE;
 import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragment.BUNDLE_DATA_OBS;
 import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragment.BUNDLE_DATA_OWNER;
+import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragment.BUNDLE_DATA_HALLMARK;
 import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragment.BUNDLE_DATA_PERIOD;
 import static com.example.catalogos.jewels_package.jewels_data.JewelsContract.JewelEntry;
 import static com.example.catalogos.jeweltypes_package.jeweltypes_data.JewelTypesContract.JewelTypeEntry;
-import static com.example.catalogos.owners_package.owners_data.OwnersContract.OwnerEntry;
 import static com.example.catalogos.periods_package.periods_data.PeriodsContract.PeriodEntry;
 import static com.example.catalogos.services.DataConvert.formatUS;
 
@@ -39,17 +40,20 @@ import com.example.catalogos.countries_package.countries_data.Country;
 import com.example.catalogos.cuts_package.cuts_data.Cut;
 import com.example.catalogos.cuts_package.cuts_data.CutsContract.CutEntry;
 import com.example.catalogos.database.mix_tables.JewelsGemstonesCutsContract.JewelsGemstonesCutsEntry;
+import com.example.catalogos.database.mix_tables.JewelsHallmarksContract;
 import com.example.catalogos.database.mix_tables.JewelsOwnersContract.JewelsOwnersEntry;
 import com.example.catalogos.designers_package.designers_data.Designer;
 import com.example.catalogos.gemstones_cuts_package.gemstones_cuts_data.JewelsGemstonesCuts;
 import com.example.catalogos.gemstones_package.gemstones_data.Gemstone;
 import com.example.catalogos.hallmarks_package.hallmarks_data.Hallmark;
-import com.example.catalogos.hallmarks_package.hallmarks_data.HallmarksContract;
 import com.example.catalogos.hallmarks_package.hallmarks_data.HallmarksContract.HallmarkEntry;
+import com.example.catalogos.jewels_hallmarks_package.jewels_data.JewelsHallmarks;
 import com.example.catalogos.jewels_owners_package.jewels_data.JewelsOwners;
 import com.example.catalogos.jewels_package.jewels_data.Jewel;
 import com.example.catalogos.jeweltypes_package.jeweltypes_data.JewelType;
 import com.example.catalogos.owners_package.owners_data.Owner;
+import com.example.catalogos.owners_package.owners_data.OwnersContract;
+import com.example.catalogos.owners_package.owners_data.OwnersContract.OwnerEntry;
 import com.example.catalogos.periods_package.periods_data.Period;
 
 import java.util.ArrayList;
@@ -222,6 +226,19 @@ public class DbHelper extends SQLiteOpenHelper {
                 + "UNIQUE (" + JewelsOwnersEntry.ID + "))");
 
 
+        // Creación de la tabla de Sellos y Joyas
+        db.execSQL ("CREATE TABLE IF NOT EXISTS " + JewelsHallmarksEntry.TABLE_NAME+ " ("
+                + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + JewelsHallmarksEntry.ID + " TEXT NOT NULL,"
+                + JewelsHallmarksEntry.FK_JEWEL_ID + " INTEGER,"
+                + JewelsHallmarksEntry.FK_HALLMARK_ID + " INTEGER,"
+
+                + "FOREIGN KEY (" + JewelsHallmarksEntry.FK_HALLMARK_ID + ") REFERENCES " + HallmarkEntry.TABLE_NAME + "(" + _ID + ") ON UPDATE CASCADE,"
+                + "FOREIGN KEY (" + JewelsHallmarksEntry.FK_JEWEL_ID + ") REFERENCES " + JewelEntry.TABLE_NAME + "(" + _ID + ") ON UPDATE CASCADE,"
+
+                + "UNIQUE (" + JewelsHallmarksEntry.ID + "))");
+
+
         // Creación de la tabla de JOYAS, TIPOS DE GEMAS Y CORTES
         db.execSQL ("CREATE TABLE IF NOT EXISTS " + JewelsGemstonesCutsEntry.TABLE_NAME+ " ("
                 + JewelsGemstonesCutsEntry.ID + " TEXT,"
@@ -306,7 +323,6 @@ public class DbHelper extends SQLiteOpenHelper {
                 + JewelTypeEntry.NAME + ","
                 + PeriodEntry.NAME + ","
                 + DesignerEntry.NAME + ","
-//                + OwnerEntry.NAME + ","
 
                 + JewelEntry.ALTER_AVATAR_URI
 
@@ -353,10 +369,12 @@ public class DbHelper extends SQLiteOpenHelper {
 
                 + JewelEntry.VIEW_NAME +"." + JewelEntry._ID + " AS " + JewelEntry.ALIAS__ID  + ","
                 + OwnerEntry.TABLE_NAME +"." + OwnerEntry._ID + " AS " + OwnerEntry.ALIAS__ID  + ","
+                + HallmarkEntry.TABLE_NAME +"." + HallmarkEntry._ID + " AS " + HallmarkEntry.ALIAS__ID  + ","
                 + GemstoneEntry.TABLE_NAME +"." + GemstoneEntry._ID + " AS " + GemstoneEntry.ALIAS__ID  + ","
                 + CutEntry.TABLE_NAME +"." + CutEntry._ID + " AS " + CutEntry.ALIAS__ID  + ","
 
                 + OwnerEntry.NAME + ","
+                + HallmarkEntry.NAME + ","
                 + GemstoneEntry.NAME + ","
                 + CutEntry.NAME
 
@@ -367,6 +385,12 @@ public class DbHelper extends SQLiteOpenHelper {
 
                 + " LEFT JOIN " + OwnerEntry.TABLE_NAME + " ON "
                 + JewelsOwnersEntry.FK_OWNER_ID  + "=" + OwnerEntry.ALIAS__ID
+
+                + " LEFT JOIN " + JewelsHallmarksEntry.TABLE_NAME + " ON "
+                + JewelsHallmarksEntry.TABLE_NAME + "." + JewelsHallmarksEntry.FK_JEWEL_ID  + "=" + JewelEntry.ALIAS__ID
+
+                + " LEFT JOIN " + HallmarkEntry.TABLE_NAME + " ON "
+                + JewelsHallmarksEntry.FK_HALLMARK_ID  + "=" + HallmarkEntry.ALIAS__ID
 
 
                 + " LEFT JOIN " + JewelsGemstonesCutsEntry.TABLE_NAME + " ON "
@@ -456,6 +480,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 + JewelEntry.JEWEL_FULL_DATA_VIEW + "." + GemstoneEntry.NAME + ","
                 + JewelEntry.JEWEL_FULL_DATA_VIEW + "." + CutEntry.NAME + ","
                 + JewelEntry.JEWEL_FULL_DATA_VIEW + "." + OwnerEntry.NAME + ","
+                + JewelEntry.JEWEL_FULL_DATA_VIEW + "." + HallmarkEntry.NAME + ","
                 + JewelEntry.JEWEL_FULL_DATA_VIEW + "." + PeriodEntry.NAME + ","
                 + JewelEntry.JEWEL_FULL_DATA_VIEW + "." + JewelEntry.OBS + ","
                 + JewelEntry.JEWEL_FULL_DATA_VIEW + "." + JewelEntry.AVATAR_URI + ","
@@ -472,6 +497,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     + JewelEntry.LOT + ","
                     + JewelEntry.JEWEL_FULL_DATA_VIEW + "." + JewelEntry.ID + ","
                     + OwnerEntry.NAME + ","
+                    + HallmarkEntry.NAME + ","
                     + GemstoneEntry.NAME + ","
                     + CutEntry.NAME
         );
@@ -676,6 +702,14 @@ public class DbHelper extends SQLiteOpenHelper {
                 strSelection += JewelEntry.JEWELS_WITH_AUCTION +"." + OwnerEntry.NAME + " LIKE ?";
                 arraySelectionArg.add (bundle.getString (BUNDLE_DATA_OWNER));
                 strGroupBy += "," + JewelEntry.JEWELS_WITH_AUCTION + "." + OwnerEntry.NAME;
+            }
+
+            if(bundle.getString (BUNDLE_DATA_HALLMARK) != null && ! bundle.getString (BUNDLE_DATA_HALLMARK).equals ("")){
+                if(!strSelection.equals ("") )
+                    strSelection += " AND ";
+                strSelection += JewelEntry.JEWELS_WITH_AUCTION +"." + HallmarkEntry.NAME + " LIKE ?";
+                arraySelectionArg.add (bundle.getString (BUNDLE_DATA_HALLMARK));
+                strGroupBy += "," + JewelEntry.JEWELS_WITH_AUCTION + "." + HallmarkEntry.NAME;
             }
 
             if(bundle.getString (BUNDLE_DATA_GEMSTONE) != null && ! bundle.getString (BUNDLE_DATA_GEMSTONE).equals ("")){
@@ -1411,6 +1445,62 @@ public class DbHelper extends SQLiteOpenHelper {
                     JewelsOwnersEntry.TABLE_NAME,
                     jewelsOwner.toContentValues (),
                     JewelsOwnersEntry.FK_JEWEL_ID + " = ?",
+                    new String[]{String.valueOf (jewelId)}
+            );
+            count++;
+        }
+        return count;
+    }
+
+
+    //---------------- JewelsHallmarks
+
+    public long saveJewelsHallmarks(JewelsHallmarks jewelsHallmarks) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+
+        return sqLiteDatabase.insert(
+                JewelsHallmarksEntry.TABLE_NAME,
+                null,
+                jewelsHallmarks.toContentValues());
+
+    }
+
+    public Cursor getAllJewelsHallmarks() {
+        return getReadableDatabase()
+                .query(
+                        JewelsHallmarksEntry.TABLE_NAME,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
+    }
+
+    public Cursor getJewelsHallmarksById(int jewelId) {
+        return getReadableDatabase().rawQuery (
+                "SELECT * FROM "
+                        + JewelsHallmarksEntry.TABLE_NAME
+                        + " WHERE "
+                        + JewelsHallmarksEntry.FK_JEWEL_ID + " = " + jewelId,null);
+    }
+
+    public int deleteJewelsHallmarks(int jewelId) {
+        Cursor c = getReadableDatabase().rawQuery (
+                "DELETE FROM "
+                        + JewelsHallmarksEntry.TABLE_NAME
+                        + " WHERE "
+                        + JewelsHallmarksEntry.FK_JEWEL_ID + " = " + jewelId,null);
+        return c.getCount ();
+    }
+
+    public int updateJewelsHallmarks(JewelsHallmarks[] jewelsHallmarks, int jewelId) {
+        int count = 0;
+        for (JewelsHallmarks jewelsHallmark : jewelsHallmarks) {
+            getWritableDatabase ().update (
+                    JewelsHallmarksEntry.TABLE_NAME,
+                    jewelsHallmark.toContentValues (),
+                    JewelsHallmarksEntry.FK_JEWEL_ID + " = ?",
                     new String[]{String.valueOf (jewelId)}
             );
             count++;

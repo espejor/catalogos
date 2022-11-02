@@ -208,6 +208,7 @@ public class JewelsByAuctionFragment extends Fragment{
     }
 
     public void printOnlyImages(){
+        cursorForPDF = mDbHelper.getAllJewelsForList (mSearchJewelDataBundle,true);
         pdfCreator.createListOfImagesPDF (cursorForPDF);
         new SelectViewerForPDFDialog (pdfCreator.getFilePath (),pdfCreator.getPDFFile()).show(getActivity().getSupportFragmentManager(),"SelectViewerForPDFDialog");
     }

@@ -17,6 +17,7 @@ import com.example.catalogos.countries_package.countries.CountriesActivity;
 import com.example.catalogos.cuts_package.cuts.CutsActivity;
 import com.example.catalogos.designers_package.designers.DesignersActivity;
 import com.example.catalogos.gemstones_package.gemstones.GemstonesActivity;
+import com.example.catalogos.hallmarks_package.hallmarks.HallmarksActivity;
 import com.example.catalogos.jeweltypes_package.jeweltypes.JewelTypesActivity;
 import com.example.catalogos.owners_package.owners.OwnersActivity;
 import com.example.catalogos.periods_package.periods.PeriodsActivity;
@@ -34,6 +35,7 @@ public class GeneralDataFragment extends Fragment {
             cvCountries, 
             cvJewelsTypes, 
             cvDesigners,
+            cvHallmarks,
             cvCuts, 
             cvOwners, 
             cvGemstones, 
@@ -73,6 +75,7 @@ public class GeneralDataFragment extends Fragment {
         cvCountries      = root.findViewById (R.id.btn_countries);
         cvJewelsTypes    = root.findViewById (R.id.btn_jewels_types);
         cvDesigners      = root.findViewById (R.id.btn_designers);
+        cvHallmarks      = root.findViewById (R.id.btn_hallmarks);
         cvCuts           = root.findViewById (R.id.btn_cuts);
         cvOwners         = root.findViewById (R.id.btn_owners);
         cvGemstones      = root.findViewById (R.id.btn_gemstones);
@@ -85,6 +88,7 @@ public class GeneralDataFragment extends Fragment {
         cvCountries     .setOnClickListener(cvCountriesListener);
         cvJewelsTypes   .setOnClickListener(cvJewelsTypesListener);
         cvDesigners     .setOnClickListener(cvDesignersListener);
+        cvHallmarks     .setOnClickListener(cvHallmarksListener);
         cvCuts          .setOnClickListener(cvCutsListener);
         cvOwners        .setOnClickListener(cvOwnersListener);
         cvGemstones     .setOnClickListener(cvGemstonesListener);
@@ -134,6 +138,15 @@ public class GeneralDataFragment extends Fragment {
         @Override
         public void onClick(View v){
             Intent intent = new Intent (getContext (), DesignersActivity.class);
+            startActivity(intent);
+        }
+    };
+
+    View.OnClickListener cvHallmarksListener = new View.OnClickListener (){
+
+        @Override
+        public void onClick(View v){
+            Intent intent = new Intent (getContext (), HallmarksActivity.class);
             startActivity(intent);
         }
     };
