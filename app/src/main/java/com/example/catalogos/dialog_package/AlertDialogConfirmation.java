@@ -33,10 +33,10 @@ public class AlertDialogConfirmation {
                 try {
                     if(onConfirm != null)
                         onConfirm.invoke (obj, (Object[]) null);
-                } catch (IllegalAccessException e) {
+                } catch (IllegalAccessException  e) {
                     e.printStackTrace ();
                 } catch (InvocationTargetException e) {
-                    e.printStackTrace ();
+//                    e.printStackTrace ();
                 }
             }
         });

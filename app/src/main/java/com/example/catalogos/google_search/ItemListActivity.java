@@ -55,7 +55,7 @@ public class ItemListActivity extends AppCompatActivity {
     private boolean mTwoPane;
     public static String TEXT_TO_SEARCH = "text_to_search";
     public String textToSearch;
-    ArrayList pictureList = new ArrayList ();
+    ArrayList<PictureGoogle.Item> pictureList = new ArrayList<> ();
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -87,7 +87,7 @@ public class ItemListActivity extends AppCompatActivity {
 
         View recyclerView = findViewById (R.id.item_list_);
         assert recyclerView != null;
-        setupRecyclerView ((RecyclerView) recyclerView,new ArrayList<PictureGoogle> ());
+        setupRecyclerView ((RecyclerView) recyclerView,new ArrayList<> ());
 
         String uri = "https://customsearch.googleapis.com/customsearch/v1/";
         String googleKey = BuildConfig.googleKey;
@@ -118,7 +118,7 @@ public class ItemListActivity extends AppCompatActivity {
                 public void onResponse(Call<PictureGoogle> call, Response<PictureGoogle> response){
                     if (response.isSuccessful ()) {
                         assert response.body () != null;
-                        ArrayList list = response.body ().getItems ();
+                        ArrayList<PictureGoogle.Item> list = response.body ().getItems ();
                         pictureList.addAll (filterImageLinks (list));
                         View recyclerView = findViewById (R.id.item_list_);
                         assert recyclerView != null;
@@ -150,7 +150,7 @@ public class ItemListActivity extends AppCompatActivity {
         return newList;
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView, ArrayList<PictureGoogle> pictureList){
+    private void setupRecyclerView(@NonNull RecyclerView recyclerView, ArrayList<PictureGoogle.Item> pictureList){
         recyclerView.setAdapter (new SimpleItemRecyclerViewAdapter (this, pictureList, mTwoPane));
     }
 

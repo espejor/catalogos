@@ -20,7 +20,6 @@ import com.google.api.services.drive.model.FileList;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Collections;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -57,9 +56,10 @@ class DriveServerHelper {
 
       return Tasks.call(executor,() -> {
          ByteArrayOutputStream byteArrayOutputStream = getFileFromGD();
-         OutputStream outputStream = null;
+         java.io.File backupFile = new java.io.File(((Activity)context).getBaseContext().getFilesDir().getParent (),"/backup/catalogo.zip");
+         FileOutputStream outputStream = null;
          try {
-            outputStream = new FileOutputStream (fileBackupPath);
+            outputStream = new FileOutputStream (backupFile);
             if (byteArrayOutputStream != null) {
                byteArrayOutputStream.writeTo (outputStream);
             }
@@ -80,12 +80,12 @@ class DriveServerHelper {
 
    private ByteArrayOutputStream getFileFromGD(){
       try {
-         OutputStream outputStream = new ByteArrayOutputStream ();
+         ByteArrayOutputStream outputStream = new ByteArrayOutputStream ();
          if(! backupFileId.equals (""))
             mDriveService.files ().get (backupFileId)
                  .executeMediaAndDownloadTo (outputStream);
 
-         return (ByteArrayOutputStream) outputStream;
+         return outputStream;
       } catch (GoogleJsonResponseException e) {
          // TODO(developer) - handle error appropriately
          System.err.println ("Unable to move file: " + e.getDetails ());
@@ -187,7 +187,7 @@ class DriveServerHelper {
          catch (IOException e) {
             e.printStackTrace ();
          }
-          if (apiFolder == null)
+         if (apiFolder == null)
             throw new IOException ("Error en la creación de carpeta.");
          return apiFolder.getId ();
       });

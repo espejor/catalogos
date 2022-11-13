@@ -10,11 +10,22 @@
         android:visible="true"
         app:showAsAction="always" />
     <item
-        android:id="@+id/create_pdf"
-        android:icon="@drawable/ic_baseline_picture_as_pdf_24_white"
-        android:title="@string/create_pdf"
-        android:visible="true"
-        app:showAsAction="always" />
+        android:id="@+id/action_share"
+        android:icon="@drawable/ic_baseline_share_24"
+        android:orderInCategory="10"
+        android:title="@string/action_share"
+        app:showAsAction="ifRoom" >
+        <menu>
+            <item
+                android:id="@+id/create_pdf"
+                android:icon="@drawable/ic_baseline_picture_as_pdf_24"
+                android:title="@string/create_pdf"/>
+            <item
+                android:id="@+id/create_excel"
+                android:icon="@drawable/excel_black"
+                android:title="@string/create_excel"/>
+        </menu>
+    </item>
     <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_baseline_settings_24"

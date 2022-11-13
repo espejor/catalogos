@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -18,7 +19,9 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.savedstate.SavedStateRegistry;
 
 import com.example.catalogos.auctions_house_package.add_edit_auction_house.AddEditAuctionHouseActivity;
 import com.example.catalogos.auctions_house_package.auctions_house.AuctionsHouseCursorAdapter;
@@ -40,11 +43,13 @@ import com.example.catalogos.services.DataConvert;
 
 import org.apache.commons.io.FilenameUtils;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 import static com.example.catalogos.auctions_package.auctionsdata.Auction.AUCTION_FILE_PATH;
@@ -82,6 +87,7 @@ public class AddEditAuctionFragment extends Fragment {
     private Bitmap imageBitmap;
     private String strURLAvatar;
     SearchingDialog searchingDialog;
+//    private Parcelable imageBitmap;
 
 
     public AddEditAuctionFragment() {
@@ -102,6 +108,17 @@ public class AddEditAuctionFragment extends Fragment {
         if (getArguments() != null) {
             mAuctionId = getArguments().getString(ARG_AUCTION_ID);
         }
+        if(savedInstanceState!= null){
+            imageBitmap = savedInstanceState.getParcelable ("dataImage");
+            keysToReturn = (Map<String, Integer>) savedInstanceState.get ("keysToReturn");
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState){
+        super.onSaveInstanceState (outState);
+        outState.putParcelable ("dataImage",imageBitmap);
+        outState.putSerializable ("keysToReturn", (Serializable) keysToReturn);
     }
 
     @Override
@@ -125,6 +142,10 @@ public class AddEditAuctionFragment extends Fragment {
         mAuctionHouseLabel = root.findViewById(R.id.til_auctionHouse);
         mDateLabel = root.findViewById(R.id.til_date);
         mAvatar = root.findViewById(R.id.iv_avatar);
+
+        if(imageBitmap != null){
+            mAvatar.setImageBitmap((Bitmap) imageBitmap);
+        }
 
         // Eventos
         mSaveButton.setOnClickListener(new View.OnClickListener() {
@@ -165,6 +186,12 @@ public class AddEditAuctionFragment extends Fragment {
 
         return root;
     }   // Fin OnCreateView
+//
+//    @Override
+//    public void onSaveInstanceState(@NonNull Bundle outState){
+//        super.onSaveInstanceState (outState);
+//        getSavedStateRegistry ().getSavedStateProvider ("image_data");   .putBoolean("MyBoolean", true);
+//    }
 
     private void openCamera(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -177,6 +204,7 @@ public class AddEditAuctionFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
+
             imageBitmap = (Bitmap) extras.get("data");
             mAvatar.setImageBitmap(imageBitmap);
         }
@@ -320,7 +348,10 @@ public class AddEditAuctionFragment extends Fragment {
         keysToReturn.put (CITY_FK,auction.getCityId ());
 
         if (auction.getAvatarUri () == null) {
-            mAvatar.setImageResource (R.drawable.ic_baseline_error_24);
+            if(imageBitmap != null)
+                mAvatar.setImageBitmap (imageBitmap);
+            else
+                mAvatar.setImageResource (R.drawable.ic_baseline_error_24);
         }else {
 
             strURLAvatar = AUCTION_FILE_PATH + auction.getAvatarUri ();

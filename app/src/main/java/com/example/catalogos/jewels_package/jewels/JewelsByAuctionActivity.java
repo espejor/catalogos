@@ -1,10 +1,12 @@
 package com.example.catalogos.jewels_package.jewels;
 
+import static com.example.catalogos.auctions_package.auctions.AuctionsActivity.EXTRA_BUNDLE_SEARCH;
+import static com.example.catalogos.auctions_package.auctions.AuctionsActivity.EXTRA_FK_AUCTION_ID;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -15,16 +17,11 @@ import com.example.catalogos.R;
 import com.example.catalogos.cuts_package.cuts.CutsActivity;
 import com.example.catalogos.designers_package.designers.DesignersActivity;
 import com.example.catalogos.gemstones_package.gemstones.GemstonesActivity;
-import com.example.catalogos.init_package.MainActivity;
 import com.example.catalogos.jeweltypes_package.jeweltypes.JewelTypesActivity;
 import com.example.catalogos.owners_package.owners.OwnersActivity;
-import com.example.catalogos.pdf_creator.PDFCreator;
 import com.example.catalogos.periods_package.periods.PeriodsActivity;
 import com.example.catalogos.services.GoHome;
 import com.example.catalogos.services.pdfviewer.SelectViewerForPDFDialog;
-
-import static com.example.catalogos.auctions_package.auctions.AuctionsActivity.EXTRA_BUNDLE_SEARCH;
-import static com.example.catalogos.auctions_package.auctions.AuctionsActivity.EXTRA_FK_AUCTION_ID;
 
 import java.io.File;
 
@@ -82,6 +79,9 @@ public class JewelsByAuctionActivity extends AppCompatActivity
             case R.id.create_pdf:
                 createPDF ();
                 return true;
+            case R.id.create_excel:
+                createExcel ();
+                return true;
             case R.id.manage_home:
                 new GoHome (this).execute ();
                 return true;
@@ -110,6 +110,10 @@ public class JewelsByAuctionActivity extends AppCompatActivity
 
     private void createPDF(){
         fragment.createPDF();
+    }
+
+    private void createExcel(){
+        fragment.createExcel();
     }
 
     private void showManageJewelTypes(){

@@ -61,7 +61,7 @@ dependencies {
     // Glide v4 uses this new annotation processor -- see https://bumptech.github.io/glide/doc/generatedapi.html
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.8.0-alpha01'
+    implementation 'com.google.android.material:material:1.8.0-alpha02'
     // https://mvnrepository.com/artifact/com.google.android.gms/play-services-auth
     implementation 'com.google.android.gms:play-services-auth:20.3.0'
     implementation 'com.google.android.gms:play-services-location:21.0.0'
@@ -70,12 +70,14 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.api.client/google-api-client-googleapis-auth
 //    implementation 'com.google.api-client:google-api-client:1.32.1'
     implementation 'org.zeroturnaround:zt-zip:1.15'
-    implementation 'com.itextpdf:itext7-core:7.1.7'
+    implementation 'com.itextpdf:itextpdf:5.5.13.3'
     implementation 'com.google.android.gms:play-services-auth:20.3.0'
 //    implementation 'com.github.tejpratap46:PDFCreatorAndroid:3.0.2'
     implementation 'com.github.mhiew:android-pdf-viewer:3.2.0-beta.1'
+//    implementation 'com.ajts.androidmads.SQLite2Excel:library:1.0.4'
 
     implementation ('com.google.api-client:google-api-client-android:1.26.0')
     { exclude group: 'org.apache.httpcomponents' }
     implementation 'com.google.http-client:google-http-client-gson:1.42.2'
+    implementation 'org.apache.poi:poi:3.16'
 }

@@ -18,28 +18,32 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 
-import org.zeroturnaround.zip.ZipUtil;
-
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.Objects;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Class to demonstrate use-case of create file in the application data folder.
  */
 public class BackupAppData {
 
-   private static final String FOLDER_FOR_APP = "Catalogos Backup";
+   private static final String FOLDER_FOR_APP_IN_GD = "Catalogos Backup";
    public static final String BACKUP_FILE_NAME = "catalogo.zip";
    private Context context;
    private GoogleSignInAccount account;
    private DriveServerHelper driveServiceHelper;
 
-   public String sdkDir;
-   private final String backupDir;
-
-   String filePathBackUp;
+   public String sdkDir;   // Path del directorio de Datos de la app
+   private final String backupDir;  // Path del directorio de la carpeta de backup
+   private final String filePathBackUp;   //Path del archivo de backup .zip
 
    public BackupAppData(Context context, GoogleSignInAccount account){
 
@@ -47,8 +51,11 @@ public class BackupAppData {
       this.account = account;
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
          sdkDir = context.getDataDir().toString ();
+      }else{
+         sdkDir = Objects.requireNonNull (context.getFilesDir ().getParentFile ()).toString ();
+//                 "/data/user/0/com.example.catalogos";
       }
-      backupDir = sdkDir + "/" + "backup";
+      backupDir = sdkDir + "/backup";
 
       filePathBackUp = backupDir + "/" + BACKUP_FILE_NAME;
    }
@@ -58,7 +65,7 @@ public class BackupAppData {
     *
     * @return Created file's Id.
     */
-   public void uploadAppData() throws IOException {
+   public void uploadBackupAppData() throws IOException {
         /*Load pre-authorized user credentials from the environment.
         TODO(developer) - See https://developers.google.com/identity for
         guides on implementing OAuth2 for your application.*/
@@ -69,12 +76,11 @@ public class BackupAppData {
          builtAuthorizedAPIClientservice(credentials);
 
       String[] filesToNotInclude = new String[]{
-         "backup", "cache","code_cache","no_backup","shared_prefs"
+         "backup", "cache","code_cache","no_backup","shared_prefs","lib"
       };
       packToZip (sdkDir,filesToNotInclude);
          // Creamos la Carpeta donde se guardará la copia de los archivos de la app
-      String folderId = createRootFolderInGD (FOLDER_FOR_APP,"");
-
+      String folderId = createRootFolderInGD (FOLDER_FOR_APP_IN_GD,"");
    }
 
    private void packToZip(String filePath, String[] filesToNotInclude){
@@ -90,6 +96,7 @@ public class BackupAppData {
          e.printStackTrace ();
       }
       progressDialog.dismiss ();
+
    }
 
 
@@ -130,19 +137,20 @@ public class BackupAppData {
       progressDialog.setMessage ("Espere...");
       progressDialog.show ();
 
-      driveServiceHelper.createFileInGD (BackupAppData.this.filePathBackUp,parentFolderId).addOnSuccessListener (new OnSuccessListener<String> () {
-         @Override
-         public void onSuccess(String s){
-            progressDialog.dismiss ();
-            Toast.makeText (context, "La BD se ha guardado en Google Drive", Toast.LENGTH_LONG).show ();
-         }
-      }).addOnFailureListener (new OnFailureListener () {
-         @Override
-         public void onFailure(@NonNull Exception e){
-            progressDialog.dismiss ();
-            Toast.makeText (context, "Ha habido un error.\nNo se ha guardado la BD", Toast.LENGTH_LONG).show ();
-         }
-      });
+      driveServiceHelper.createFileInGD (BackupAppData.this.filePathBackUp,parentFolderId)
+         .addOnSuccessListener (new OnSuccessListener<String> () {
+            @Override
+            public void onSuccess(String s){
+               progressDialog.dismiss ();
+               Toast.makeText (context, "La BD se ha guardado en Google Drive", Toast.LENGTH_LONG).show ();
+            }
+         }).addOnFailureListener (new OnFailureListener () {
+            @Override
+            public void onFailure(@NonNull Exception e){
+               progressDialog.dismiss ();
+               Toast.makeText (context, "Ha habido un error.\nNo se ha guardado la BD", Toast.LENGTH_LONG).show ();
+            }
+         });
    }
 
    public void downloadAppData(){
@@ -172,7 +180,13 @@ public class BackupAppData {
            @Override
            public void onSuccess(String s){
               // Descomprimir el archivo
-              unpackToZip ();
+              try {
+                 unpackZipFile ();
+              } catch (Exception e) {
+                 progressDialog.dismiss ();
+                 Toast.makeText (context, "Ha habido un error.\nNo se ha descargado la Copia", Toast.LENGTH_LONG).show ();
+                 e.printStackTrace ();
+              }
               progressDialog.dismiss ();
               Toast.makeText (context, "Se ha descargado la copia de seguridad", Toast.LENGTH_LONG).show ();
            }
@@ -186,7 +200,40 @@ public class BackupAppData {
         });
    }
 
-   private void unpackToZip(){
-      ZipUtil.unpack (new File (filePathBackUp), new File (sdkDir).getParentFile ());
+   private void unpackZipFile() throws Exception{
+      unzipFileIntoDirectory (new File (filePathBackUp), new File (sdkDir).getParentFile ());
+   }
+   public void unzipFileIntoDirectory(File archive, File destinationDir)
+           throws Exception {
+      final int BUFFER_SIZE = 1024;
+      BufferedOutputStream dest = null;
+      FileInputStream fis = new FileInputStream(archive);
+      ZipInputStream zis = new ZipInputStream(new BufferedInputStream (fis));
+      ZipEntry entry;
+      File destFile;
+      while ((entry = zis.getNextEntry()) != null) {
+         destFile = new File(destinationDir, entry.getName());
+         if (entry.isDirectory()) {
+            destFile.mkdirs();
+            continue;
+         } else {
+            int count;
+            byte data[] = new byte[BUFFER_SIZE];
+            destFile.getParentFile().mkdirs();
+            boolean deleted = false;
+            if(destFile.exists ())
+               deleted = destFile.delete ();
+            FileOutputStream fos = new FileOutputStream(destFile);
+            dest = new BufferedOutputStream(fos, BUFFER_SIZE);
+            while ((count = zis.read(data, 0, BUFFER_SIZE)) != -1) {
+               dest.write(data, 0, count);
+            }
+            dest.flush();
+            dest.close();
+            fos.close();
+         }
+      }
+      zis.close();
+      fis.close();
    }
 }

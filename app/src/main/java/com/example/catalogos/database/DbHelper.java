@@ -4,7 +4,7 @@ import static android.provider.BaseColumns._ID;
 import static com.example.catalogos.auctions_house_package.auctions_house_data.AuctionsHouseContract.AuctionHouseEntry;
 import static com.example.catalogos.auctions_package.auctionsdata.AuctionsContract.AuctionEntry;
 import static com.example.catalogos.countries_package.countries_data.CountriesContract.CountryEntry;
-import static com.example.catalogos.database.mix_tables.JewelsHallmarksContract.*;
+import static com.example.catalogos.database.mix_tables.JewelsHallmarksContract.JewelsHallmarksEntry;
 import static com.example.catalogos.designers_package.designers_data.DesignersContract.DesignerEntry;
 import static com.example.catalogos.gemstones_package.gemstones_data.GemstonesContract.GemstoneEntry;
 import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragment.BUNDLE_DATA_AUCTION_HOUSE;
@@ -15,10 +15,10 @@ import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragm
 import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragment.BUNDLE_DATA_DATE_TO;
 import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragment.BUNDLE_DATA_DESIGNER;
 import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragment.BUNDLE_DATA_GEMSTONE;
+import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragment.BUNDLE_DATA_HALLMARK;
 import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragment.BUNDLE_DATA_JEWEL_TYPE;
 import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragment.BUNDLE_DATA_OBS;
 import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragment.BUNDLE_DATA_OWNER;
-import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragment.BUNDLE_DATA_HALLMARK;
 import static com.example.catalogos.jewels_package.jewel_search.JewelSearchFragment.BUNDLE_DATA_PERIOD;
 import static com.example.catalogos.jewels_package.jewels_data.JewelsContract.JewelEntry;
 import static com.example.catalogos.jeweltypes_package.jeweltypes_data.JewelTypesContract.JewelTypeEntry;
@@ -40,7 +40,6 @@ import com.example.catalogos.countries_package.countries_data.Country;
 import com.example.catalogos.cuts_package.cuts_data.Cut;
 import com.example.catalogos.cuts_package.cuts_data.CutsContract.CutEntry;
 import com.example.catalogos.database.mix_tables.JewelsGemstonesCutsContract.JewelsGemstonesCutsEntry;
-import com.example.catalogos.database.mix_tables.JewelsHallmarksContract;
 import com.example.catalogos.database.mix_tables.JewelsOwnersContract.JewelsOwnersEntry;
 import com.example.catalogos.designers_package.designers_data.Designer;
 import com.example.catalogos.gemstones_cuts_package.gemstones_cuts_data.JewelsGemstonesCuts;
@@ -52,7 +51,6 @@ import com.example.catalogos.jewels_owners_package.jewels_data.JewelsOwners;
 import com.example.catalogos.jewels_package.jewels_data.Jewel;
 import com.example.catalogos.jeweltypes_package.jeweltypes_data.JewelType;
 import com.example.catalogos.owners_package.owners_data.Owner;
-import com.example.catalogos.owners_package.owners_data.OwnersContract;
 import com.example.catalogos.owners_package.owners_data.OwnersContract.OwnerEntry;
 import com.example.catalogos.periods_package.periods_data.Period;
 
@@ -658,7 +656,7 @@ public class DbHelper extends SQLiteOpenHelper {
         String strGroupBy = null;
         strGroupBy = JewelEntry.JEWELS_WITH_AUCTION + "." + JewelEntry.ID;
 
-        if(!bundle.isEmpty ()){
+        if(bundle != null && !bundle.isEmpty ()){
             ArrayList<String> arraySelectionArg;
             strSelection = "";
             arraySelectionArg = new ArrayList<> ();

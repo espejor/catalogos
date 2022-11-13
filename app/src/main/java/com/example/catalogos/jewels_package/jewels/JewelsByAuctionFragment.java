@@ -1,8 +1,14 @@
 package com.example.catalogos.jewels_package.jewels;
 
 
+import static com.example.catalogos.auctions_package.auctions.AuctionsActivity.EXTRA_BUNDLE_SEARCH;
+import static com.example.catalogos.auctions_package.auctions.AuctionsActivity.EXTRA_FK_AUCTION_ID;
+import static com.example.catalogos.jewels_package.jewels_data.JewelsContract.JewelEntry;
+import static com.example.catalogos.services.pdfviewer.PDFViewActivity.PATH;
+
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,11 +23,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.example.catalogos.R;
 import com.example.catalogos.database.DbHelper;
 import com.example.catalogos.dialog_package.QueryDialog;
+import com.example.catalogos.excel_convertion.ExcelTranslator;
 import com.example.catalogos.jewels_package.add_edit_jewel.AddEditJewelActivity;
 import com.example.catalogos.jewels_package.jewel_detail.JewelDetailActivity;
 import com.example.catalogos.lots_package.lots.JewelsByLotDetailActivity;
@@ -29,13 +37,10 @@ import com.example.catalogos.pdf_creator.PDFCreator;
 import com.example.catalogos.services.pdfviewer.PDFViewActivity;
 import com.example.catalogos.services.pdfviewer.SelectViewerForPDFDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import static com.example.catalogos.auctions_package.auctions.AuctionsActivity.EXTRA_BUNDLE_SEARCH;
-import static com.example.catalogos.auctions_package.auctions.AuctionsActivity.EXTRA_FK_AUCTION_ID;
-import static com.example.catalogos.jewels_package.jewels_data.JewelsContract.JewelEntry;
-import static com.example.catalogos.services.pdfviewer.PDFViewActivity.PATH;
+import com.itextpdf.text.DocumentException;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 
@@ -66,9 +71,6 @@ public class JewelsByAuctionFragment extends Fragment{
 
     public static JewelsByAuctionFragment newInstance() {
         JewelsByAuctionFragment fragment = new JewelsByAuctionFragment ();
-//        Bundle args = new Bundle();
-//        args.putInt(ARG_FK_AUCTION_ID, fkAuctionId);
-//        fragment.setArguments(args);
         return  fragment;
     }
 
@@ -208,14 +210,61 @@ public class JewelsByAuctionFragment extends Fragment{
     }
 
     public void printOnlyImages(){
-        cursorForPDF = mDbHelper.getAllJewelsForList (mSearchJewelDataBundle,true);
-        pdfCreator.createListOfImagesPDF (cursorForPDF);
+        if(mFkAuctionId != 0)
+            cursorForPDF =  mDbHelper.getAllJewelsByAuctionId (mFkAuctionId,true);
+        else{
+            cursorForPDF = mDbHelper.getAllJewelsForList (mSearchJewelDataBundle,true);
+        }
+        try {
+            pdfCreator.createListOfImagesPDF (cursorForPDF);
+        } catch (DocumentException | IOException e) {
+            e.printStackTrace ();
+        }
         new SelectViewerForPDFDialog (pdfCreator.getFilePath (),pdfCreator.getPDFFile()).show(getActivity().getSupportFragmentManager(),"SelectViewerForPDFDialog");
     }
 
     public void printAllInfo(){
-        pdfCreator.createListPDF (cursorForPDF);
+        try {
+            pdfCreator.createListPDF (cursorForPDF);
+        } catch (DocumentException e) {
+            e.printStackTrace ();
+        }
         new SelectViewerForPDFDialog (pdfCreator.getFilePath (),pdfCreator.getPDFFile()).show(getActivity().getSupportFragmentManager(),"SelectViewerForPDFDialog");
+    }
+
+    public void createExcel(){
+        Cursor cursor;
+        if(mFkAuctionId != 0)
+            cursor =  mDbHelper.getAllJewelsByAuctionId (mFkAuctionId,false);
+        else{
+            cursor = mDbHelper.getAllJewelsForList (mSearchJewelDataBundle,false);
+        }
+
+        File excelFile = new ExcelTranslator (getActivity ()).sqlite2Excel (cursor).translate ("listOfJewels");
+        if(excelFile != null){
+            openExcelApp(excelFile);
+        }
+    }
+
+    private void openExcelApp(File excelFile){
+        if (excelFile.exists()){
+            Uri uri = FileProvider.getUriForFile((Context) getActivity (), getActivity ().getApplicationContext().getPackageName() + ".provider", excelFile);
+            Intent intent = new Intent (Intent.ACTION_VIEW)
+                    .setDataAndType(uri,"application/vnd.ms-excel")
+                    .setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    ;
+
+            try {
+                getActivity ().startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                getActivity ().startActivity (new Intent (Intent.ACTION_VIEW,
+                        Uri.parse ("market://details?id=com.adobe.reader")));
+                Toast.makeText (getActivity (),"No cuentas con una aplicación para lectura de archivos EXCEL",Toast.LENGTH_LONG).show();
+            }
+        }else {
+            Toast.makeText (getActivity (),"No se encontró el archivo EXCEL",Toast.LENGTH_LONG).show();
+        }
     }
 
     public void onLocal(String filePath, File pdfFile){

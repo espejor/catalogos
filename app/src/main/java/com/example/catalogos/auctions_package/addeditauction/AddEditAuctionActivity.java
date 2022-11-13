@@ -2,6 +2,7 @@ package com.example.catalogos.auctions_package.addeditauction;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -34,6 +35,7 @@ public class AddEditAuctionActivity extends AppCompatActivity {
                     .commit();
         }
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {

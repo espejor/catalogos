@@ -1,79 +1,81 @@
 package com.example.catalogos.pdf_creator;
 
 
-import static com.example.catalogos.auctions_package.auctionsdata.AuctionsContract.*;
-import static com.example.catalogos.cities_package.cities_data.CitiesContract.*;
-import static com.example.catalogos.designers_package.designers_data.DesignersContract.*;
 import static com.example.catalogos.jewels_package.jewels_data.Jewel.JEWEL_FILE_PATH;
-import static com.example.catalogos.jewels_package.jewels_data.JewelsContract.*;
-import static com.itextpdf.io.font.constants.StandardFonts.HELVETICA;
-import static com.itextpdf.io.font.constants.StandardFonts.HELVETICA_BOLD;
-import static com.itextpdf.io.font.constants.StandardFonts.HELVETICA_OBLIQUE;
+import static com.example.catalogos.jewels_package.jewels_data.JewelsContract.JewelEntry;
+import static com.itextpdf.text.FontFactory.HELVETICA;
+import static com.itextpdf.text.FontFactory.HELVETICA_BOLD;
+import static com.itextpdf.text.FontFactory.HELVETICA_OBLIQUE;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import com.example.catalogos.R;
 import com.example.catalogos.auctions_house_package.auctions_house_data.AuctionsHouseContract.AuctionHouseEntry;
+import com.example.catalogos.auctions_package.auctionsdata.AuctionsContract.AuctionEntry;
+import com.example.catalogos.cities_package.cities_data.CitiesContract.CityEntry;
 import com.example.catalogos.cuts_package.cuts_data.CutsContract.CutEntry;
+import com.example.catalogos.designers_package.designers_data.DesignersContract.DesignerEntry;
 import com.example.catalogos.gemstones_package.gemstones_data.GemstonesContract.GemstoneEntry;
-import com.example.catalogos.hallmarks_package.hallmarks_data.HallmarksContract;
 import com.example.catalogos.hallmarks_package.hallmarks_data.HallmarksContract.HallmarkEntry;
 import com.example.catalogos.jeweltypes_package.jeweltypes_data.JewelTypesContract.JewelTypeEntry;
 import com.example.catalogos.owners_package.owners_data.OwnersContract.OwnerEntry;
-import com.itextpdf.io.image.ImageData;
-import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.Canvas;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.borders.Border;
-import com.itextpdf.layout.borders.SolidBorder;
-import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.IBlockElement;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.property.HorizontalAlignment;
-import com.itextpdf.layout.property.TextAlignment;
-import com.itextpdf.layout.property.UnitValue;
-import com.itextpdf.layout.property.VerticalAlignment;
-import com.itextpdf.layout.renderer.CellRenderer;
-import com.itextpdf.layout.renderer.DrawContext;
-import com.itextpdf.layout.renderer.IRenderer;
+import com.example.catalogos.periods_package.periods_data.PeriodsContract.PeriodEntry;
+import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.List;
+import com.itextpdf.text.ListItem;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.ColumnText;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Locale;
 
 public class PDFCreator {
+    public static final int NORMAL = 10;
+    public static final BaseColor LIGHT_GRAY_WATERMARK = new BaseColor(192, 192, 192, 127);
+    public static final BaseColor BACKGROUND_VERY_LIGHT_GRAY = new BaseColor(220,220,220);
+
+    private final Rectangle pageSize = PageSize.A4.rotate ();
+
     private final Context context;
     private final String fileName;
     File file;
+    String pdfPath;
     private Cursor cursor = null;
-    int columnsList = 7;
+    int columnsList = 9;
     private Document document;
-    private PdfWriter writer;
-    private PdfDocument pdfDocument;
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -81,35 +83,39 @@ public class PDFCreator {
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
-    private String title = "Catálogo de Joyas";
-    private String owner = "Alejandro Espejo Fernández";
-    private String waterMark = "Propiedad de \n" + owner;
-    private Text txtTitle;
-    private Text txtOwner;
-    private Text txtBody;
-    private Text txtWaterMark;
+    private String title;
+    private String owner;
+    private String waterMark;
 
-    private Cell currentOwnerCell;
-    private Cell currentHallmarkCell;
-    private Cell currentGemstoneCell;
+    private Phrase txtTitle;
+    private Phrase txtOwner;
+    private Phrase txtWaterMark;
+
+    private PdfPCell currentOwnerCell;
+    private PdfPCell currentHallmarkCell;
+    private PdfPCell currentGemstoneCell;
     private boolean currentOwnerCellPrinted = true;
     private boolean currentHallmarkCellPrinted = true;
     private boolean currentGemstoneCellPrinted = true;
     
-    com.itextpdf.layout.element.List ownersList = new com.itextpdf.layout.element.List();
-    com.itextpdf.layout.element.List hallmarksList = new com.itextpdf.layout.element.List();
-    com.itextpdf.layout.element.List gemstonesList = new com.itextpdf.layout.element.List();
+    List ownersList = new List();
+    List hallmarksList = new List();
+    List gemstonesList = new List();
 
-    private PdfFont fBold;
-    private PdfFont fNormal;
-    private PdfFont fItalic;
+    private Font fBold16;
+    private Font fBold24;
+    private Font fBold42WM;
+    private Font fNormal;
+    private Font fItalic;
     private Uri uri;
     private String oldOwner;
     private String oldHallmark;
     private ArrayList<String[]> gemstonesPrinted = new ArrayList<> ();
 
     public PDFCreator(Context context,String filename){
-        verifyStoragePermissions(context);
+        if (Build.VERSION.SDK_INT >= 22)
+            verifyStoragePermissions(context);
+
         this.context = context;
         this.fileName = filename + ".pdf";
         settingFonts();
@@ -121,22 +127,12 @@ public class PDFCreator {
     }
 
     private void settingFonts(){
-        try {
-            fBold = PdfFontFactory.createFont(HELVETICA_BOLD);
-            fNormal = PdfFontFactory.createFont(HELVETICA);
-            fItalic = PdfFontFactory.createFont(HELVETICA_OBLIQUE);
-        } catch (IOException e) {
-            e.printStackTrace ();
-        }
 
-        txtTitle = new Text (title).setFont (fBold)
-                .setFontSize (24);
-        txtOwner = new Text (owner).setFont (fBold)
-                .setFontSize (16);
-        txtBody = new Text ("").setFont (fNormal)
-                .setFontSize (10);
-        txtWaterMark = new Text (waterMark).setFont (fBold)
-                .setFontSize (42);
+        fBold16 = FontFactory.getFont (HELVETICA_BOLD,16);
+        fBold24 = FontFactory.getFont (HELVETICA_BOLD,24);
+        fBold42WM = FontFactory.getFont (HELVETICA_BOLD,42,Font.ITALIC,LIGHT_GRAY_WATERMARK);
+        fNormal = FontFactory.getFont(HELVETICA,NORMAL);
+        fItalic = FontFactory.getFont(HELVETICA_OBLIQUE,NORMAL);
     }
 
     public PDFCreator(Context context){
@@ -144,7 +140,7 @@ public class PDFCreator {
     }
 
     private void createPDF(){
-        String pdfPath = context.getFilesDir () + "/tempPDF";
+        pdfPath = context.getFilesDir () + "/tempPDF";
 
         File pdfDir = new File(pdfPath);
         if (! pdfDir.exists ())
@@ -153,23 +149,43 @@ public class PDFCreator {
         uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);
 
         try {
-            writer = new PdfWriter (String.valueOf(file));
-            pdfDocument = new PdfDocument(writer);
-            document = new Document (pdfDocument);
-        } catch (FileNotFoundException e) {
+            document = new Document(pageSize);// Landscape
+            PdfWriter.getInstance (document,new FileOutputStream (getFilePath ()))
+                    .setPageEvent(new MyPdfPageEventHelper());
+            document.open ();
+        } catch (DocumentException | IOException e) {
             e.printStackTrace ();
         }
+
+    }
+    private Locale setLocale(Locale desiredLocale){
+        Resources res = context.getResources();
+        Configuration conf = res.getConfiguration();
+        Locale savedLocale = conf.locale;
+        conf.locale = desiredLocale; // whatever you want here
+        res.updateConfiguration(conf, null); // second arg null means don't change
+        return savedLocale;
     }
 
-    public void createListOfImagesPDF(Cursor cursor){
+    public void createListOfImagesPDF(Cursor cursor) throws DocumentException, IOException{
         this.cursor = cursor;
-        int columns = 4;
+        int columns = 3;
+
+        int[] widths = new int[columns];
+        for (int i = 0; i < columns; i++) {
+            widths[i] = 1;
+        }
 
         // agregar el título
+        Locale oldLocale = setLocale (Locale.ENGLISH);
         addTitlePage ();
+        setLocale (oldLocale);
 
         // Adding paragraphs to document
-        Table table = new Table (columns).useAllAvailableWidth ();
+        PdfPTable table = new PdfPTable (columns);
+        table.setWidthPercentage (100);
+        table.setWidths (widths);
+
 
         // Recorrer el cursor para imprimir todas las joyas
         cursor.moveToFirst ();
@@ -183,33 +199,18 @@ public class PDFCreator {
             Image image = null;
             if (avatarUri != null){
                 // Creating an ImageData object
-                ImageData data = null;
-                try {
-                    data = ImageDataFactory.create(uri);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace ();
-                }
-
-                UnitValue tableWidth = table.getWidth ();
-                // Creating an Image object
-                image = new Image(data);
-                image.setHeight (new UnitValue (UnitValue.PERCENT,tableWidth.getValue ()/columns));
-                image.setWidth (tableWidth.getValue ()/columns);
+                image = Image.getInstance (uri);
             }
+            PdfPCell c = new PdfPCell (image,true);
 
-            Cell c = new Cell ();
-            c.setHeight (c.getWidth ())
-                    .setPadding (4F);
-            if (image != null) {
-                c.add (image.setAutoScale (true));
-            }
+            c.setPadding (4F);
+            c.setBorder (15);
             table.addCell (c);
-
         }
-        document.add (table);
 
-        // agregar marca de agua
-        addWatermark ();
+        table.completeRow();
+        document.add (table);
+        document.add(Chunk.NEXTPAGE);
 
         document.close();
 
@@ -218,13 +219,15 @@ public class PDFCreator {
     }
 
 
-    public void createListPDF(Cursor cursor){
+    public void createListPDF(Cursor cursor) throws DocumentException{
         this.cursor = cursor;
 
         // agregar el título
+        Locale oldLocale = setLocale (Locale.ENGLISH);
         addTitlePage ();
 
-        Table table = new Table(columnsList).useAllAvailableWidth();
+        PdfPTable table = new PdfPTable(columnsList);
+        table.setWidthPercentage (100);
 
         // Lista
         //Orden de los cortes
@@ -244,8 +247,6 @@ public class PDFCreator {
             String entryJewelId = JewelEntry.ID;
             String entryOwner =  OwnerEntry.NAME;
             String entryHallmark =  HallmarkEntry.NAME;
-            String entryGemstone =  GemstoneEntry.NAME;
-            String entryCut =  CutEntry.NAME;
 
 
             int column;
@@ -346,19 +347,20 @@ public class PDFCreator {
         cursor.close ();
         document.add (table);
 
-        // agregar marca de agua
-        addWatermark ();
-
         document.close();
 
+        setLocale (oldLocale);
         Toast.makeText(context, "El documento se ha creado correctamente", Toast.LENGTH_SHORT).show();
     }
 
 
-    private void printJewel(Cursor cursor, Table table, boolean isFirstJewelOfLot, boolean isDistinctJewel, boolean isDistincOwnerOfJewel, boolean isDistincHallmarkOfJewel){
+    private void printJewel(Cursor cursor, PdfPTable table, boolean isFirstJewelOfLot, boolean isDistinctJewel, boolean isDistincOwnerOfJewel, boolean isDistincHallmarkOfJewel){
 
         String entryJewelType = JewelTypeEntry.NAME;
         String entryDesigner =  DesignerEntry.NAME;
+        String entryPeriod = PeriodEntry.NAME;
+        String entryObs = JewelEntry.OBS;
+
         String entryOwner =  OwnerEntry.NAME;
         String entryHallmark =  HallmarkEntry.NAME;
         String entryGemstone =  GemstoneEntry.NAME;
@@ -370,6 +372,10 @@ public class PDFCreator {
         String jewelType = cursor.getString(column);
         column = cursor.getColumnIndex(entryDesigner);
         String designer = cursor.getString(column);
+        column = cursor.getColumnIndex(entryPeriod);
+        String period = cursor.getString(column);
+        column = cursor.getColumnIndex(entryObs);
+        String obs = cursor.getString(column);
         column = cursor.getColumnIndex(entryOwner);
         String owner = cursor.getString(column);
         column = cursor.getColumnIndex(entryHallmark);
@@ -385,58 +391,49 @@ public class PDFCreator {
         Image image = null;
         if (avatarUri != null){
             // Creating an ImageData object
-            ImageData data = null;
             try {
-                data = ImageDataFactory.create(uri);
-            } catch (MalformedURLException e) {
+                image = Image.getInstance (uri);
+                image.scaleAbsolute (40F,60F);
+            } catch (BadElementException | IOException e) {
                 e.printStackTrace ();
             }
-
-            // Creating an Image object
-            image = new Image(data);
-            image.setHeight (40F);
-            image.setWidth (40F);
         }
 
-        Cell c = null;
+        PdfPCell c = null;
         // Celdas vacías de lote
         if(!isFirstJewelOfLot && currentOwnerCellPrinted && currentHallmarkCellPrinted && currentGemstoneCellPrinted) {// No es la primera joya del lote. Se deja celda  vacía
-            c = new Cell ()
-                    .setBorder(Border.NO_BORDER)
-                    .setBorderBottom (new SolidBorder (1F));
+            c = new PdfPCell ();
+            c.setBorder(Rectangle.NO_BORDER);
             table.addCell (c);  // lote vacío
         }
-        // Imprimimos celdas con valores únicos
         if(isDistinctJewel) {   // Nueva joya
-            printSingleValues (table, image, jewelType, designer);
+            // Imprimimos celdas con valores únicos
+            printSingleValues (table, image, jewelType, designer,period,obs);
             gemstonesPrinted.clear ();
-            gemstonesList = new com.itextpdf.layout.element.List();
-            ownersList = new com.itextpdf.layout.element.List();
-            hallmarksList = new com.itextpdf.layout.element.List();
+            gemstonesList = new List();
+            ownersList = new List();
+            hallmarksList = new List();
 
             // Imprimimos primer valor de celda con valores múltiples
-            ownersList.add(owner != null ? owner : "");
-            currentOwnerCell = new Cell ()
-                    .setBorder (Border.NO_BORDER)
-                    .setBorderBottom (new SolidBorder (1F))
-                    .add (new Paragraph (owner != null ? "Propietarios:\n" : ""))
-                    .add (ownersList);
+            ownersList.add(new ListItem (owner != null ? owner : "",fNormal));
+            currentOwnerCell = new PdfPCell ();
+            currentOwnerCell.setBorder (1);
+            currentOwnerCell.addElement (new Paragraph (owner != null ? context.getString (R.string.owners) + ":\n" : "",fNormal));
+            currentOwnerCell.addElement (ownersList);
             currentOwnerCellPrinted = false;
-            
-            hallmarksList.add(hallmark != null ? hallmark : "");
-            currentHallmarkCell = new Cell ()
-                    .setBorder (Border.NO_BORDER)
-                    .setBorderBottom (new SolidBorder (1F))
-                    .add (new Paragraph (hallmark != null ? "Contrastes:\n" : ""))
-                    .add (hallmarksList);
+
+            hallmarksList.add(new ListItem (hallmark != null ? hallmark : "",fNormal));
+            currentHallmarkCell = new PdfPCell ();
+            currentHallmarkCell.setBorder (1);
+            currentHallmarkCell.addElement (new Paragraph (hallmark != null ? context.getString (R.string.hallmarks) + ":\n" : "",fNormal));
+            currentHallmarkCell.addElement (hallmarksList);
             currentHallmarkCellPrinted = false;
 
-            gemstonesList.add((gemstone != null ? gemstone : "") + (cut != null ? " corte " + cut : ""));
-            currentGemstoneCell = new Cell ()
-                    .setBorder (Border.NO_BORDER)
-                    .setBorderBottom (new SolidBorder (1F))
-                    .add(new Paragraph (gemstone != null ? "Gemas:\n" : ""))
-                    .add (gemstonesList);
+            gemstonesList.add(new ListItem ((gemstone != null ? gemstone : "") + (cut != null ? " corte " + cut : ""),fNormal));
+            currentGemstoneCell = new PdfPCell ();
+            currentGemstoneCell.setBorder (1);
+            currentGemstoneCell.addElement(new Paragraph (gemstone != null ? context.getString (R.string.gemstones) + ":\n" : "",fNormal));
+            currentGemstoneCell.addElement (gemstonesList);
             currentGemstoneCellPrinted = false;
             if(gemstone != null)
                 gemstonesPrinted.add(new String[]{gemstone,cut});
@@ -444,21 +441,22 @@ public class PDFCreator {
         } else {    // Misma joya
             if (isDistincOwnerOfJewel) {    // Nuevo propietario
                 // Imprimimos siguiente valor de celda con valores múltiples
-                ownersList.add(owner != null ? owner : "");
+                ownersList.add(new ListItem (owner != null ? owner : "",fNormal));
             }else{  // Mismo propietario
                 if (isDistincHallmarkOfJewel) {    // Nuevo punzón
                     // Imprimimos siguiente valor de celda con valores múltiples
-                    hallmarksList.add(hallmark != null ? hallmark : "");
+                    hallmarksList.add(new ListItem (hallmark != null ? hallmark : "",fNormal));
                 }else{  // Mismo punzón
                     if(!isInList (gemstonesPrinted,new String[]{gemstone,cut})) {
                         gemstonesPrinted.add(new String[]{gemstone,cut});
-                        gemstonesList.add(gemstone + (cut != null ? " corte " + cut : ""));
+                        gemstonesList.add(new ListItem (gemstone + (cut != null ? " " + context.getString (R.string.cut) + " " + cut : ""),fNormal));
                     }
                 }
             }
         }
-     }
-    public static boolean isInList(final List<String[]> list, final String[] candidate){
+    }
+
+    public static boolean isInList(final ArrayList<String[]> list, final String[] candidate){
         for(final String[] item : list){
             if(Arrays.equals(item, candidate)){
                 return true;
@@ -467,39 +465,46 @@ public class PDFCreator {
         return false;
     }
 
-    private void printSingleValues(Table table, Image image, String jewelType, String designer){
-        Cell c;
+    private void printSingleValues(PdfPTable table, Image image, String jewelType, String designer, String period, String obs){
+        PdfPCell c;
         // Imagen
-        c = new Cell ()
-                .setBorder(Border.NO_BORDER)
-                .setBorderBottom (new SolidBorder (1F));
+        c = new PdfPCell ();
+        c.setBorder(Rectangle.TOP);
         if(image != null)
-            c.add (image);
+            c.addElement (image);
         else
-            c.add(new Paragraph ("Sin imagen"));
+            c.addElement (new Paragraph (context.getString (R.string.no_image) ,fItalic));
         table.addCell (c);
 
-        c = new Cell ()
-                .setBorder(Border.NO_BORDER)
-                .setBorderBottom (new SolidBorder (1F))
-                .add(new Paragraph ("Tipo: " + (jewelType != null? jewelType:"")));
+        c = new PdfPCell ();
+        c.setBorder(Rectangle.TOP);
+        c.addElement (new Paragraph (context.getString (R.string.type) + ":\n" + (jewelType != null? jewelType:""),fNormal));
         table.addCell (c);
 
-        c = new Cell ()
-                .setBorder(Border.NO_BORDER)
-                .setBorderBottom (new SolidBorder (1F))
-                .add(new Paragraph ("Diseñador: " + (designer != null? designer:"")));
+        c = new PdfPCell ();
+        c.setBorder(Rectangle.TOP);
+        c.addElement (new Paragraph (context.getString (R.string.designed_by) + ":\n" + (designer != null? designer:""),fNormal));
+        table.addCell (c);
+
+        c = new PdfPCell ();
+        c.setBorder(Rectangle.TOP);
+        c.addElement (new Paragraph (context.getString (R.string.period) + ":\n" + (period != null? period:""),fNormal));
+        table.addCell (c);
+
+        c = new PdfPCell ();
+        c.setBorder(Rectangle.TOP);
+        c.addElement (new Paragraph (context.getString (R.string.obs) + ":\n" + (obs != null? obs:""),fNormal));
         table.addCell (c);
     }
 
-    private void printLot(String lot,Table table){
-        Cell c = new Cell ()
-                    .setBorder (Border.NO_BORDER)
-                    .add(new Paragraph ("Lote: " + (lot != null? lot:"")));
+    private void printLot(String lot,PdfPTable table){
+        PdfPCell c = new PdfPCell ();
+        c.setBorder(Rectangle.TOP);
+        c.addElement (new Paragraph (context.getString (R.string.lot) + ": "+ (lot != null? " " + lot:""),fNormal));
         table.addCell (c);
     }
 
-    private void printAuction(Cursor cursor,Table table ){
+    private void printAuction(Cursor cursor,PdfPTable table ){
         String entryAuction =  AuctionEntry.NAME;
         String entryAuctionHouse =  AuctionHouseEntry.NAME;
         String entryCity =  CityEntry.NAME;
@@ -514,38 +519,48 @@ public class PDFCreator {
         column = cursor.getColumnIndex(entryDate);
         String date = cursor.getString(column);
 
-        Cell c = new Cell (1,columnsList)
-                .setBackgroundColor (ColorConstants.LIGHT_GRAY)
-                .setBorder (Border.NO_BORDER)
-                .add(new Paragraph ("Subasta: " + auction))
-                .add(new Paragraph ("Casa de Subastas: " + auctionHouse))
-                .add(new Paragraph ("Ciudad: " + city))
-                .add(new Paragraph ("Fecha: " + date));
+        PdfPCell c = new PdfPCell ();
+        c.setColspan (columnsList);
+        c.setBackgroundColor (BACKGROUND_VERY_LIGHT_GRAY);
+        c.setBorder (0);
+        c.addElement (new Paragraph (context.getString (R.string.auction) + ": " + auction,fNormal));
+        c.addElement (new Paragraph (context.getString (R.string.auction_house) + ": " + auctionHouse,fNormal));
+        c.addElement (new Paragraph (context.getString (R.string.city) + ": " + city,fNormal));
+        c.addElement (new Paragraph (context.getString (R.string.date) + ": " + date,fNormal));
         table.addCell (c);
     }
 
-    private void addTitlePage(){
-        Table table = new Table(1).useAllAvailableWidth();
+    private void addTitlePage() throws DocumentException{
+        title = context.getString (R.string.jewelry_catalog);
+        owner = context.getString (R.string.owner_name);
+        txtTitle = new Phrase (title,fBold24);
+        txtOwner = new Phrase (owner,fBold16);
 
-        document.getPdfDocument ().getDefaultPageSize ().applyMargins (0,0,0,0,false);
-        float h = document.getPdfDocument ().getDefaultPageSize ().getHeight ();
-        table.setHeight (700 );
-        table.setBorder (Border.NO_BORDER);
+        PdfPTable table = new PdfPTable(1);
+        table.setWidthPercentage (100);
+//        table.setHorizontalAlignment (Element.ALIGN_CENTER);
+        table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+        float h = document.getPageSize ().getHeight ();
+        float topMargin = 30F;
+        float bottomMargin = 30F;
+        float heightTable = h - topMargin - bottomMargin;
 
-        Cell cell = new Cell();
-        cell.setBorder (Border.NO_BORDER);
-        cell.setHeight (new UnitValue (UnitValue.PERCENT,100));
-        cell.setVerticalAlignment (VerticalAlignment.MIDDLE);
-        cell.setHorizontalAlignment (HorizontalAlignment.CENTER);
+        PdfPCell cell = new PdfPCell();
+        cell.setBorder (3);
+        cell.setFixedHeight (heightTable);
+        cell.setVerticalAlignment (Element.ALIGN_MIDDLE);
+        cell.setHorizontalAlignment (Element.ALIGN_CENTER);
         Paragraph p = new Paragraph (txtTitle);
-        p.setHorizontalAlignment (HorizontalAlignment.CENTER);
         Paragraph pp = new Paragraph (txtOwner);
-        pp.setHorizontalAlignment (HorizontalAlignment.CENTER);
-        cell.add (p);
-        cell.add (pp);        table.addCell(cell);
-
-        document.add (table);
-        document.add (new AreaBreak ());
+        cell.addElement (p);
+        cell.addElement (pp);
+        table.addCell(cell);
+        try {
+            document.add (table);
+//            document.add(Chunk.NEXTPAGE);
+        } catch (DocumentException e) {
+//            document.add(Chunk.NEXTPAGE);
+        }
     }
 
 
@@ -556,9 +571,9 @@ public class PDFCreator {
      *
      * @param context
      */
-    public static void verifyStoragePermissions(Context context) {
+    public void verifyStoragePermissions(Context context) {
         // Check if we have write permission
-        int permission = ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int permission = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         if (permission != PackageManager.PERMISSION_GRANTED) {
             // We don't have permission so prompt the user
@@ -570,22 +585,53 @@ public class PDFCreator {
         }
     }
 
-    private void addWatermark(){
-        // Implement transformation matrix usage in order to scale image
-        for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
-
-            PdfPage pdfPage = pdfDocument.getPage(i);
-            Rectangle pageSize = pdfPage.getPageSizeWithRotation();
-
-            Paragraph p = new Paragraph(txtWaterMark).setFontColor(ColorConstants.LIGHT_GRAY,0.5F);
-            float x = (pageSize.getLeft() + pageSize.getRight()) / 2;
-            float y = (pageSize.getTop() + pageSize.getBottom()) / 2;
-//            PdfCanvas over = new PdfCanvas(pdfDocument.getPage(i));
-            float angle = (float) Math.PI / 3;
-            document.showTextAligned(p, x, y, i, TextAlignment.CENTER, VerticalAlignment.TOP, angle);
-        }
-
-    }
+//    private void addWatermark() throws IOException, DocumentException{
+////        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        // pdf
+////        PdfContentByte over;
+//
+//        PdfWriter pdfWriter = PdfWriter
+//                .getInstance(document, new FileOutputStream(file.getAbsolutePath ()));
+//
+//        pdfWriter.setPageEvent(new MyPdfPageEventHelper()); // register the
+//        // page event helper
+//
+////        document.close ();
+////        PdfReader reader = new PdfReader (file.getAbsolutePath ());
+//////        PdfStamper stamper =  new PdfStamper(reader, outputStream);
+////        int pages = reader.getNumberOfPages ();
+////        document.open ();
+//
+////        Paragraph p = new Paragraph(txtWaterMark);
+//        // transparency
+////        PdfGState gs1 = new PdfGState();
+////        gs1.setFillOpacity(0.06f);
+//        // Implement transformation matrix usage in order to scale image
+////        for (int i = 1; i <= pages; i++) {
+////            document.add(new Paragraph(
+////                    "This document contains a Watermark text (Background text). "));
+////////            PdfPage pdfPage = document.getP (i);
+//////            Rectangle pageSize = reader.getPageSizeWithRotation(i);
+////////                    .setFontColor(ColorConstants.LIGHT_GRAY,0.5F);
+//////            float x = (pageSize.getLeft() + pageSize.getRight()) / 2;
+//////            float y = (pageSize.getTop() + pageSize.getBottom()) / 2;
+//////            over = stamper.getOverContent(i);
+//////            over.saveState();
+//////            over.setGState(gs1);
+//////            // add text
+//////            float angle = (float) Math.PI / 3;
+//////            ColumnText.showTextAligned(over, Element.ALIGN_CENTER, txtWaterMark, x, y, angle);
+//////            over.restoreState();
+////        }
+////        try {
+////            stamper.close();
+////        } catch (DocumentException e) {
+////            e.printStackTrace ();
+////        } catch (IOException e) {
+////            e.printStackTrace ();
+////        }
+////        reader.close();
+//    }
 
     public File getPDFFile(){
         return file;
@@ -595,37 +641,62 @@ public class PDFCreator {
         return uri;
     }
 
-    private static class WatermarkedCellRenderer extends CellRenderer {
-        private PdfDocument pdfDocument;
-        private Text content;
+//    private static class WatermarkedCellRenderer extends CellRenderer {
+//        private PdfDocument pdfDocument;
+//        private Text content;
+//
+//        public WatermarkedCellRenderer(PdfDocument pdfDocument, Cell modelElement, Text content) {
+//            super(modelElement);
+//            this.pdfDocument = pdfDocument;
+//            this.content = content;
+//        }
+//
+//        // If a renderer overflows on the next area, iText uses #getNextRenderer() method to create a new renderer for the overflow part.
+//        // If #getNextRenderer() isn't overridden, the default method will be used and thus the default rather than the custom
+//        // renderer will be created
+//        @Override
+//        public IRenderer getNextRenderer() {
+//            return new WatermarkedCellRenderer(pdfDocument, (Cell) modelElement, content);
+//        }
+//
+//        @Override
+//        public void draw(DrawContext drawContext) {
+//            super.draw(drawContext);
+//
+//            Paragraph p = new Paragraph(content).setFontColor(ColorConstants.LIGHT_GRAY);
+//            Rectangle rect = getOccupiedAreaBBox();
+//            float coordX = (rect.getLeft() + rect.getRight()) / 2;
+//            float coordY = (rect.getBottom() + rect.getTop()) / 2;
+//            float angle = (float) Math.PI / 3;
+//            new Canvas (drawContext.getCanvas(), pdfDocument, rect)
+//                .showTextAligned(p, coordX, coordY, getOccupiedArea().getPageNumber(),
+//                        TextAlignment.CENTER, VerticalAlignment.MIDDLE, angle)
+//                .close();
+//        }
+//    }
+    /**
+     * Extend PdfPageEventHelper class and override onEndPagemethod
+     * to create page event helper.
+     *
+     * onEndPage method gets called as soon as document is closed i.e.
+     * immediately after document.close(); is called
+     */
+    class MyPdfPageEventHelper extends PdfPageEventHelper {
 
-        public WatermarkedCellRenderer(PdfDocument pdfDocument, Cell modelElement, Text content) {
-            super(modelElement);
-            this.pdfDocument = pdfDocument;
-            this.content = content;
-        }
-
-        // If a renderer overflows on the next area, iText uses #getNextRenderer() method to create a new renderer for the overflow part.
-        // If #getNextRenderer() isn't overridden, the default method will be used and thus the default rather than the custom
-        // renderer will be created
         @Override
-        public IRenderer getNextRenderer() {
-            return new WatermarkedCellRenderer(pdfDocument, (Cell) modelElement, content);
-        }
+        public void onEndPage(PdfWriter pdfWriter, Document document) {
+            PdfContentByte pdfContentByte = pdfWriter.getDirectContent();
+            waterMark = context.getString (R.string.property_of) + " " + owner;
+            txtWaterMark = new Phrase (waterMark, fBold42WM);
 
-        @Override
-        public void draw(DrawContext drawContext) {
-            super.draw(drawContext);
-
-            Paragraph p = new Paragraph(content).setFontColor(ColorConstants.LIGHT_GRAY);
-            Rectangle rect = getOccupiedAreaBBox();
-            float coordX = (rect.getLeft() + rect.getRight()) / 2;
-            float coordY = (rect.getBottom() + rect.getTop()) / 2;
-            float angle = (float) Math.PI / 3;
-            new Canvas (drawContext.getCanvas(), pdfDocument, rect)
-                .showTextAligned(p, coordX, coordY, getOccupiedArea().getPageNumber(),
-                        TextAlignment.CENTER, VerticalAlignment.MIDDLE, angle)
-                .close();
+//            Rectangle pageSize = PageSize.A4;
+            float x = (pageSize.getLeft() + pageSize.getRight()) / 2;
+            float y = (pageSize.getTop() + pageSize.getBottom()) / 2;
+            double rotation = Math.toDegrees (Math.atan2 (y,x));
+            ColumnText.showTextAligned(pdfContentByte,
+                    Element.ALIGN_CENTER, //Keep waterMark center aligned
+                    txtWaterMark, x, y,
+                    (float) rotation); // 30 aprox is the rotation angle
         }
     }
 }

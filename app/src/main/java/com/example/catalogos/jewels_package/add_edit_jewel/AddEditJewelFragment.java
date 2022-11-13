@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -25,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.catalogos.R;
@@ -70,6 +72,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.apache.commons.io.FilenameUtils;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -131,8 +134,6 @@ public class AddEditJewelFragment extends Fragment {
     Map <String, ArrayList> textsMultiToReturn = new HashMap<> ();
 
     private ArrayList elementsSelected = new ArrayList<> ();
-//    private ArrayList ownersSelected;
-//    private ArrayList gemstonesAndCutsSelected;
 
     private Bitmap imageBitmap;
     private String strURLAvatar;
@@ -189,7 +190,19 @@ public class AddEditJewelFragment extends Fragment {
             mLotNumber = getArguments().getString(ARG_LOT_NUMBER);
             mFkAuctionId = getArguments ().getInt (ARG_FK_AUCTION_ID);
         }
+        if(savedInstanceState!= null){
+            imageBitmap = savedInstanceState.getParcelable ("dataImage");
+            keysToReturn = (Map<String, Integer>) savedInstanceState.get ("keysToReturn");
+        }
     }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState){
+        super.onSaveInstanceState (outState);
+        outState.putParcelable ("dataImage",imageBitmap);
+        outState.putSerializable ("keysToReturn", (Serializable) keysToReturn);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -238,6 +251,10 @@ public class AddEditJewelFragment extends Fragment {
         mJewelTypeLabel = root.findViewById(R.id.til_jewelType);
 
         mAvatar = root.findViewById(R.id.iv_avatar);
+
+        if(imageBitmap != null){
+            mAvatar.setImageBitmap((Bitmap) imageBitmap);
+        }
 
         // Eventos
         mSaveButton.setOnClickListener(new View.OnClickListener() {
@@ -566,9 +583,11 @@ public class AddEditJewelFragment extends Fragment {
 // TODO: 02/04/2022
 //        keysMultiToReturn.put (OWNERS_FK,jewel.getOwnerID ());
 
-
         if (jewel.getAvatarUri () == null) {
-            mAvatar.setImageResource (R.drawable.ic_baseline_error_24);
+            if(imageBitmap != null)
+                mAvatar.setImageBitmap (imageBitmap);
+            else
+                mAvatar.setImageResource (R.drawable.ic_baseline_error_24);
         }else {
 
             strURLAvatar = JEWEL_FILE_PATH + jewel.getAvatarUri ();

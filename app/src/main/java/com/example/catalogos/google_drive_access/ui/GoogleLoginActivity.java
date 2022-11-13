@@ -71,10 +71,8 @@ public class GoogleLoginActivity extends AppCompatActivity {
         findViewById(R.id.sign_in_button).setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick(View view){
-                switch (view.getId()) {
-                    case R.id.sign_in_button:
-                        requestSignIn ();
-                        break;
+                if (view.getId () == R.id.sign_in_button) {
+                    requestSignIn ();
                 }
 
             }
@@ -95,7 +93,7 @@ public class GoogleLoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view){
                 try {
-                    new BackupAppData (GoogleLoginActivity.this,account).uploadAppData ();
+                    new BackupAppData (GoogleLoginActivity.this,account).uploadBackupAppData ();
                 } catch (IOException e) {
                     e.printStackTrace ();
                 }

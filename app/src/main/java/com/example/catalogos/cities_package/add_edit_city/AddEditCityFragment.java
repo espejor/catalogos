@@ -20,6 +20,7 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -43,6 +44,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.apache.commons.io.FilenameUtils;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -99,6 +101,15 @@ public class AddEditCityFragment extends Fragment {
         if (getArguments() != null) {
             mCityId = getArguments().getString(ARG_CITY_ID);
         }
+        if(savedInstanceState!= null){
+            keysToReturn = (Map<String, Integer>) savedInstanceState.get ("keysToReturn");
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState){
+        super.onSaveInstanceState (outState);
+        outState.putSerializable ("keysToReturn", (Serializable) keysToReturn);
     }
 
     @Override
