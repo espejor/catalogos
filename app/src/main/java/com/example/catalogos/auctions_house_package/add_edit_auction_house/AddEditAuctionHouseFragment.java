@@ -1,6 +1,10 @@
 package com.example.catalogos.auctions_house_package.add_edit_auction_house;
 
 
+import static android.app.Activity.RESULT_OK;
+import static com.example.catalogos.auctions_house_package.auctions_house_data.AuctionHouse.AUCTION_HOUSE_FILE_PATH;
+import static com.example.catalogos.auctions_house_package.auctions_house_data.AuctionHouse.AUCTION_HOUSE_FOLDER;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -36,11 +40,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.apache.commons.io.FilenameUtils;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
-import static android.app.Activity.RESULT_OK;
-import static com.example.catalogos.auctions_house_package.auctions_house_data.AuctionHouse.AUCTION_HOUSE_FILE_PATH;
-import static com.example.catalogos.auctions_house_package.auctions_house_data.AuctionHouse.AUCTION_HOUSE_FOLDER;
 
 /**
  * Vista para creación/edición de un casa de subasta
@@ -132,7 +131,7 @@ public class AddEditAuctionHouseFragment extends Fragment {
     }
 
     private void openSearchPictures(){
-        String textToSearch = "logo+casa+de+subastas+" +  mNameField.getText ().toString();
+        String textToSearch = "auction+house+logo+" +  mNameField.getText ().toString();
 
         Intent intent = new Intent(getActivity(), ItemListActivity.class);
         intent.putExtra(ItemListActivity.TEXT_TO_SEARCH, textToSearch);

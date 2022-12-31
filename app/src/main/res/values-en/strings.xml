@@ -227,10 +227,10 @@
     <string name="external">Externo</string>
     <string name="cancel">Cancelar</string>
     <string name="hallmarks">Hallmarks</string>
-    <string name="list_of_hallmarks_types">Lista de Tipos de Contrastes</string>
-    <string name="hallmark_type">Tipo de Contraste</string>
-    <string name="searching_hallmark_type">Buscar Tipo de Contraste</string>
-    <string name="searching_hallmarks">Buscar Contraste</string>
+    <string name="list_of_hallmarks_types">Lista de Tipos de Sellos</string>
+    <string name="hallmark_type">Tipo de Sello</string>
+    <string name="searching_hallmark_type">Buscar Tipo de Sello</string>
+    <string name="searching_hallmarks">Buscar Sello</string>
     <string name="add_owner">Add Owner</string>
     <string name="edit_owner">Edit Owner</string>
     <string name="add_hallmark">Add Hallmark</string>

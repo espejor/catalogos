@@ -1,6 +1,10 @@
 package com.example.catalogos.designers_package.add_edit_designer;
 
 
+import static android.app.Activity.RESULT_OK;
+import static com.example.catalogos.designers_package.designers_data.Designer.DESIGNER_FILE_PATH;
+import static com.example.catalogos.designers_package.designers_data.Designer.DESIGNER_FOLDER;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -22,8 +26,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.catalogos.R;
-import com.example.catalogos.designers_package.designers_data.Designer;
 import com.example.catalogos.database.DbHelper;
+import com.example.catalogos.designers_package.designers_data.Designer;
 import com.example.catalogos.google_search.ItemListActivity;
 import com.example.catalogos.services.DataConvert;
 import com.example.catalogos.services.ImageSaver;
@@ -36,11 +40,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.apache.commons.io.FilenameUtils;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
-import static android.app.Activity.RESULT_OK;
-import static com.example.catalogos.designers_package.designers_data.Designer.DESIGNER_FILE_PATH;
-import static com.example.catalogos.designers_package.designers_data.Designer.DESIGNER_FOLDER;
 
 /**
  * Vista para creación/edición de un subasta
@@ -132,7 +131,7 @@ public class AddEditDesignerFragment extends Fragment {
     }
 
     private void openSearchPictures(){
-        String textToSearch = "jewel+designer+logo+" +  mNameField.getText ().toString();
+        String textToSearch = "jewelry+designer+logo+" +  mNameField.getText ().toString();
 
         Intent intent = new Intent(getActivity(), ItemListActivity.class);
         intent.putExtra(ItemListActivity.TEXT_TO_SEARCH, textToSearch);

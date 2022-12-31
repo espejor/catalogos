@@ -1,6 +1,10 @@
 package com.example.catalogos.jeweltypes_package.add_edit_jeweltype;
 
 
+import static android.app.Activity.RESULT_OK;
+import static com.example.catalogos.jeweltypes_package.jeweltypes_data.JewelType.JEWEL_TYPE_FILE_PATH;
+import static com.example.catalogos.jeweltypes_package.jeweltypes_data.JewelType.JEWEL_TYPE_FOLDER;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -23,8 +27,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.catalogos.R;
 import com.example.catalogos.database.DbHelper;
-import com.example.catalogos.jeweltypes_package.add_edit_jeweltype.AddEditJewelTypeFragment;
-import com.example.catalogos.jeweltypes_package.jeweltypes_data.JewelType;
 import com.example.catalogos.google_search.ItemListActivity;
 import com.example.catalogos.jeweltypes_package.jeweltypes_data.JewelType;
 import com.example.catalogos.services.DataConvert;
@@ -38,11 +40,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.apache.commons.io.FilenameUtils;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
-import static android.app.Activity.RESULT_OK;
-import static com.example.catalogos.jeweltypes_package.jeweltypes_data.JewelType.JEWEL_TYPE_FILE_PATH;
-import static com.example.catalogos.jeweltypes_package.jeweltypes_data.JewelType.JEWEL_TYPE_FOLDER;
 
 /**
  * Vista para creación/edición de un Tipo de Joya
@@ -134,7 +131,7 @@ public class AddEditJewelTypeFragment extends Fragment {
     }
 
     private void openSearchPictures(){
-        String textToSearch = "jewel+Type+" +  mNameField.getText ().toString();
+        String textToSearch = "jewel+" +  mNameField.getText ().toString();
 
         Intent intent = new Intent(getActivity(), ItemListActivity.class);
         intent.putExtra(ItemListActivity.TEXT_TO_SEARCH, textToSearch);

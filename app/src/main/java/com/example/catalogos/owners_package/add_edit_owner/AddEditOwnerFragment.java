@@ -135,7 +135,7 @@ public class AddEditOwnerFragment extends Fragment {
     }
 
     private void openSearchPictures(){
-        String textToSearch = "persone+" +  mNameField.getText ().toString();
+        String textToSearch = "person+" +  mNameField.getText ().toString();
 
         Intent intent = new Intent(getActivity(), ItemListActivity.class);
         intent.putExtra(ItemListActivity.TEXT_TO_SEARCH, textToSearch);

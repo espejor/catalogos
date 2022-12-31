@@ -169,7 +169,7 @@ public class PDFCreator {
 
     public void createListOfImagesPDF(Cursor cursor) throws DocumentException, IOException{
         this.cursor = cursor;
-        int columns = 3;
+        int columns = 6;
 
         int[] widths = new int[columns];
         for (int i = 0; i < columns; i++) {
@@ -200,6 +200,10 @@ public class PDFCreator {
             if (avatarUri != null){
                 // Creating an ImageData object
                 image = Image.getInstance (uri);
+                if(image.getHeight () < image.getWidth ()) {
+//                    image.scaleAbsolute (60F, 40F);
+                    image.setRotationDegrees (90);
+                }
             }
             PdfPCell c = new PdfPCell (image,true);
 
@@ -393,7 +397,12 @@ public class PDFCreator {
             // Creating an ImageData object
             try {
                 image = Image.getInstance (uri);
-                image.scaleAbsolute (40F,60F);
+                if(image.getHeight () < image.getWidth ()) {
+                    image.scaleAbsolute (60F, 40F);
+                    image.setRotationDegrees (90);
+                }else
+                    image.scaleAbsolute (40F,60F);
+
             } catch (BadElementException | IOException e) {
                 e.printStackTrace ();
             }
@@ -470,8 +479,9 @@ public class PDFCreator {
         // Imagen
         c = new PdfPCell ();
         c.setBorder(Rectangle.TOP);
-        if(image != null)
+        if(image != null) {
             c.addElement (image);
+        }
         else
             c.addElement (new Paragraph (context.getString (R.string.no_image) ,fItalic));
         table.addCell (c);

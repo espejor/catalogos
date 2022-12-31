@@ -187,7 +187,7 @@ public class AddEditCityFragment extends Fragment {
 
 
     private void openSearchPictures(){
-        String textToSearch = "monumento+" +  mNameField.getText ().toString();
+        String textToSearch = "monumento+principal+" +  mNameField.getText ().toString();
 
         Intent intent = new Intent(getActivity(), ItemListActivity.class);
         intent.putExtra(ItemListActivity.TEXT_TO_SEARCH, textToSearch);

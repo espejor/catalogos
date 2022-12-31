@@ -29,6 +29,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 
@@ -72,7 +73,9 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onOpen(SQLiteDatabase db){
         super.onOpen(db);
         if (!db.isReadOnly()) {
-            db.setForeignKeyConstraintsEnabled(true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                db.setForeignKeyConstraintsEnabled(true);
+            }
         }
     }
 
@@ -107,10 +110,9 @@ public class DbHelper extends SQLiteOpenHelper {
                 + JewelEntry.FK_DESIGNER_ID + " INTEGER,"
                 + JewelEntry.FK_PERIOD_ID + " INTEGER,"
                 + JewelEntry.FK_AUCTION_ID + " INTEGER,"
-//                + JewelEntry.OWNER_ID + " INTEGER,"
                 + JewelEntry.OBS + " TEXT,"
                 + JewelEntry.AVATAR_URI + " TEXT,"
-                + "FOREIGN KEY (" + JewelEntry.FK_JEWEL_TYPE_ID + ") REFERENCES " + JewelTypeEntry.TABLE_NAME + "(" + JewelTypeEntry._ID + ") ON DELETE SET NULL ON UPDATE CASCADE,"
+                + "FOREIGN KEY (" + JewelEntry.FK_JEWEL_TYPE_ID + ") REFERENCES " + JewelTypeEntry.TABLE_NAME + "(" + JewelTypeEntry._ID + ") ON DELETE CASCADE ON UPDATE CASCADE,"
                 + "FOREIGN KEY (" + JewelEntry.FK_PERIOD_ID + ") REFERENCES " + PeriodEntry.TABLE_NAME + "(" + PeriodEntry._ID + ") ON DELETE SET NULL ON UPDATE CASCADE,"
                 + "FOREIGN KEY (" + JewelEntry.FK_DESIGNER_ID + ") REFERENCES " + DesignerEntry.TABLE_NAME + "(" + DesignerEntry._ID + ") ON DELETE SET NULL ON UPDATE CASCADE,"
                 + "FOREIGN KEY (" + JewelEntry.FK_AUCTION_ID + ") REFERENCES " + AuctionEntry.TABLE_NAME + "(" + AuctionEntry._ID + ") ON DELETE CASCADE ON UPDATE CASCADE,"
@@ -177,7 +179,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 + OwnerEntry.AVATAR_URI + " TEXT,"
                 + "UNIQUE (" + OwnerEntry.ID + "))");
 
-        // Creación de la tabla de CONTRASTES
+        // Creación de la tabla de SELLOS
         db.execSQL("CREATE TABLE IF NOT EXISTS " + HallmarkEntry.TABLE_NAME + " ("
                 + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + HallmarkEntry.ID + " TEXT NOT NULL,"
@@ -218,8 +220,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 + JewelsOwnersEntry.FK_JEWEL_ID + " INTEGER,"
                 + JewelsOwnersEntry.FK_OWNER_ID + " INTEGER,"
 
-                + "FOREIGN KEY (" + JewelsOwnersEntry.FK_OWNER_ID + ") REFERENCES " + OwnerEntry.TABLE_NAME + "(" + _ID + ") ON UPDATE CASCADE,"
-                + "FOREIGN KEY (" + JewelsOwnersEntry.FK_JEWEL_ID + ") REFERENCES " + JewelEntry.TABLE_NAME + "(" + _ID + ") ON UPDATE CASCADE,"
+                + "FOREIGN KEY (" + JewelsOwnersEntry.FK_OWNER_ID + ") REFERENCES " + OwnerEntry.TABLE_NAME + "(" + _ID + ") ON DELETE CASCADE ON UPDATE CASCADE,"
+                + "FOREIGN KEY (" + JewelsOwnersEntry.FK_JEWEL_ID + ") REFERENCES " + JewelEntry.TABLE_NAME + "(" + _ID + ") ON DELETE CASCADE ON UPDATE CASCADE,"
 
                 + "UNIQUE (" + JewelsOwnersEntry.ID + "))");
 
@@ -231,8 +233,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 + JewelsHallmarksEntry.FK_JEWEL_ID + " INTEGER,"
                 + JewelsHallmarksEntry.FK_HALLMARK_ID + " INTEGER,"
 
-                + "FOREIGN KEY (" + JewelsHallmarksEntry.FK_HALLMARK_ID + ") REFERENCES " + HallmarkEntry.TABLE_NAME + "(" + _ID + ") ON UPDATE CASCADE,"
-                + "FOREIGN KEY (" + JewelsHallmarksEntry.FK_JEWEL_ID + ") REFERENCES " + JewelEntry.TABLE_NAME + "(" + _ID + ") ON UPDATE CASCADE,"
+                + "FOREIGN KEY (" + JewelsHallmarksEntry.FK_HALLMARK_ID + ") REFERENCES " + HallmarkEntry.TABLE_NAME + "(" + _ID + ") ON DELETE CASCADE ON UPDATE CASCADE,"
+                + "FOREIGN KEY (" + JewelsHallmarksEntry.FK_JEWEL_ID + ") REFERENCES " + JewelEntry.TABLE_NAME + "(" + _ID + ") ON DELETE CASCADE ON UPDATE CASCADE,"
 
                 + "UNIQUE (" + JewelsHallmarksEntry.ID + "))");
 
@@ -244,9 +246,9 @@ public class DbHelper extends SQLiteOpenHelper {
                 + JewelsGemstonesCutsEntry.FK_GEMSTONE_ID + " INTEGER,"
                 + JewelsGemstonesCutsEntry.FK_CUT_ID + " INTEGER,"
 
-                + "FOREIGN KEY (" + JewelsGemstonesCutsEntry.FK_CUT_ID + ") REFERENCES " + CutEntry.TABLE_NAME + "(" + _ID + ") ON UPDATE CASCADE,"
-                + "FOREIGN KEY (" + JewelsGemstonesCutsEntry.FK_GEMSTONE_ID + ") REFERENCES " + GemstoneEntry.TABLE_NAME + "(" + _ID + ") ON UPDATE CASCADE,"
-                + "FOREIGN KEY (" + JewelsGemstonesCutsEntry.FK_JEWEL_ID + ") REFERENCES " + JewelEntry.TABLE_NAME + "(" + _ID + ") ON UPDATE CASCADE)");
+                + "FOREIGN KEY (" + JewelsGemstonesCutsEntry.FK_CUT_ID + ") REFERENCES " + CutEntry.TABLE_NAME + "(" + _ID + ") ON DELETE SET NULL ON UPDATE CASCADE,"
+                + "FOREIGN KEY (" + JewelsGemstonesCutsEntry.FK_GEMSTONE_ID + ") REFERENCES " + GemstoneEntry.TABLE_NAME + "(" + _ID + ") ON DELETE CASCADE ON UPDATE CASCADE,"
+                + "FOREIGN KEY (" + JewelsGemstonesCutsEntry.FK_JEWEL_ID + ") REFERENCES " + JewelEntry.TABLE_NAME + "(" + _ID + ") ON DELETE CASCADE ON UPDATE CASCADE)");
 
 //        // Creación de la tabla de lOTES
 //        db.execSQL ("CREATE TABLE IF NOT EXISTS " + LotEntry.TABLE_NAME+ " ("
@@ -653,8 +655,8 @@ public class DbHelper extends SQLiteOpenHelper {
     public Cursor getAllJewelsForList(Bundle bundle, boolean group) {
         String strSelection = null;
         String[] selectionArgs = null;
-        String strGroupBy = null;
-        strGroupBy = JewelEntry.JEWELS_WITH_AUCTION + "." + JewelEntry.ID;
+//        String strGroupBy = null;
+        String strGroupBy = JewelEntry.JEWELS_WITH_AUCTION + "." + JewelEntry.ID;
 
         if(bundle != null && !bundle.isEmpty ()){
             ArrayList<String> arraySelectionArg;
